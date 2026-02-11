@@ -1,0 +1,40 @@
+on: [push]
+
+jobs:
+  build:
+    runs-on: windows-latest # MSYS2 is primarily used on Windows runners
+
+    steps:
+    - uses: actions/checkout@v4 # Checkout your repository's code
+
+    - name: Setup MSYS2
+      uses: msys2/setup-msys2@v2
+      with:
+        # Define which MSYS2 subsystem to use (e.g., MINGW64, UCRT64, CLANG64)
+        msystem: UCRT64 
+        # Install required packages using pacman
+        install: >-
+          git
+          curl
+          mingw-w64-ucrt-x86_64-gcc # Example: install GCC for C/C++
+          gcc 
+          cmake 
+          xz 
+          tiff 
+          libwebp 
+          fftw 
+          libjpeg-turbo 
+          gnuplot 
+          sqlite  
+          cuda 
+          openmpi   
+          base-devel
+
+    - name: Run build commands in MSYS2 shell
+      # Use the 'msys2 {0}' shell to execute subsequent commands within the MSYS2 environment
+      shell: msys2 {0} 
+      run: |
+        # Example commands
+        uname -a
+        gcc --version
+        # Add your build commands here
