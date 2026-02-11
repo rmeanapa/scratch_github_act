@@ -22,17 +22,12 @@ jobs:
           mingw-w64-ucrt-x86_64-libjpeg-turbo
           mingw-w64-ucrt-x86_64-gnuplot
           mingw-w64-ucrt-x86_64-sqlite3
+          mingw-w64-ucrt-x86_64-libwebp
+          mingw-w64-ucrt-x86_64-nvidia-cg-toolkit
           gcc 
           gcc 
           cmake 
           xz 
-
-    - name: Install packages
-      shell: msys2 {0} 
-      run: |
-           git clone https://github.com/hael/SIMPLE.git 
-           cd SIMPLE
-           ./compile_clean.sh
 
     - name: Run build commands in MSYS2 shell
       # Use the 'msys2 {0}' shell to execute subsequent commands within the MSYS2 environment
@@ -42,3 +37,10 @@ jobs:
         uname -a
         gcc --version
         # Add your build commands here
+
+    - name: Install packages
+      shell: msys2 {0} 
+      run: |
+           git clone https://github.com/hael/SIMPLE.git 
+           cd SIMPLE
+           ./compile_clean.sh
