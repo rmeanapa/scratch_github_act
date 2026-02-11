@@ -30,7 +30,7 @@ jobs:
     - name: Install packages
       shell: msys2 {0} 
       run: |
-           git clone git@github.com:hael/SIMPLE.git
+           git clone https://github.com/hael/SIMPLE.git 
            cd SIMPLE
            ./compile_clean.sh
 
