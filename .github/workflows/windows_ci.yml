@@ -41,6 +41,7 @@ jobs:
         make --version
         gcc -fopenmp --version
         pacman -Qi mingw-w64-ucrt-x86_64-gcc | grep Version
+        echo | cpp -fopenmp -dM | grep -i open
         # Add your build commands here
 
     - name: Install packages
