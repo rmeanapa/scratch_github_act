@@ -39,6 +39,7 @@ jobs:
         gcc --version
         gfortran --version
         make --version
+        gcc -fopenmp --version
         pacman -Qi mingw-w64-ucrt-x86_64-gcc | grep Version
         # Add your build commands here
 
