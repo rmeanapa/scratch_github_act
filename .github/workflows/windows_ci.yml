@@ -17,6 +17,10 @@ jobs:
           git
           curl
           mingw-w64-ucrt-x86_64-gcc 
+          mingw-w64-ucrt-x86_64-libtiff
+          mingw-w64-ucrt-x86_64-fftw
+          mingw-w64-ucrt-x86_64-libjpeg-turbo
+          mingw-w64-ucrt-x86_64-gnuplot
           gcc 
           cmake 
           xz 
