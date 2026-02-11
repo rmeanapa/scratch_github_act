@@ -20,15 +20,10 @@ jobs:
           gcc 
           cmake 
           xz 
-          tiff 
-          libwebp 
-          fftw 
-          libjpeg-turbo 
-          gnuplot 
-          sqlite  
-          cuda 
-          openmpi   
-          base-devel
+
+    - name: Install packages
+        run: |
+             pacman --noconfime -S --needed fftw
 
     - name: Run build commands in MSYS2 shell
       # Use the 'msys2 {0}' shell to execute subsequent commands within the MSYS2 environment
