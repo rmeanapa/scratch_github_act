@@ -48,4 +48,8 @@ jobs:
       run: |
            git clone https://github.com/hael/SIMPLE.git 
            cd SIMPLE
-           ./compile_clean.sh
+           rm -rf build
+           mkdir build
+           cd build
+           cmake .. -DGUI=off -DUSE_LIBTIFF=off -DUSE_OPENMP=off
+           make -j install
