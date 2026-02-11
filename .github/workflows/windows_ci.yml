@@ -18,6 +18,7 @@ jobs:
           curl
           mingw-w64-ucrt-x86_64-gcc-fortran
           mingw-w64-ucrt-x86_64-cmake
+          mingw-w64-ucrt-x86_64-make
           mingw-w64-ucrt-x86_64-libtiff
           mingw-w64-ucrt-x86_64-fftw
           mingw-w64-ucrt-x86_64-libjpeg-turbo
