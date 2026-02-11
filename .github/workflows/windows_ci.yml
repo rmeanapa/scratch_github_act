@@ -52,5 +52,5 @@ jobs:
            rm -rf build
            mkdir build
            cd build
-           cmake .. -DGUI=off -DUSE_LIBTIFF=off -DUSE_OPENMP=off
+           cmake -G "MSYS Makefiles" .. -DGUI=off -DUSE_LIBTIFF=off -DUSE_OPENMP=off
            make -j install
