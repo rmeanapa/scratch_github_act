@@ -16,7 +16,8 @@ jobs:
         install: >-
           git
           curl
-          mingw-w64-ucrt-x86_64-gcc 
+          mingw-w64-ucrt-x86_64-gcc-gfortran
+          mingw-w64-ucrt-x86_64-cmake
           mingw-w64-ucrt-x86_64-libtiff
           mingw-w64-ucrt-x86_64-fftw
           mingw-w64-ucrt-x86_64-libjpeg-turbo
@@ -24,10 +25,6 @@ jobs:
           mingw-w64-ucrt-x86_64-sqlite3
           mingw-w64-ucrt-x86_64-libwebp
           mingw-w64-ucrt-x86_64-nvidia-cg-toolkit
-          gcc 
-          gcc 
-          cmake 
-          xz 
 
     - name: Run build commands in MSYS2 shell
       # Use the 'msys2 {0}' shell to execute subsequent commands within the MSYS2 environment
@@ -36,6 +33,7 @@ jobs:
         # Example commands
         uname -a
         gcc --version
+        gfortran --version
         pacman -Qi mingw-w64-ucrt-x86_64-gcc | grep Version
         # Add your build commands here
 
