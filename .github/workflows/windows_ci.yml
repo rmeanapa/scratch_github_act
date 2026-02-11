@@ -16,7 +16,7 @@ jobs:
         install: >-
           git
           curl
-          mingw-w64-ucrt-x86_64-gcc # Example: install GCC for C/C++
+          mingw-w64-ucrt-x86_64-gcc 
           gcc 
           cmake 
           xz 
