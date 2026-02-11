@@ -22,8 +22,9 @@ jobs:
           xz 
 
     - name: Install packages
-        run: |
-             pacman --noconfime -S --needed fftw
+      shell: msys2 {0} 
+      run: |
+        pacman --noconfirmed -S --needed fftw libtiff
 
     - name: Run build commands in MSYS2 shell
       # Use the 'msys2 {0}' shell to execute subsequent commands within the MSYS2 environment
