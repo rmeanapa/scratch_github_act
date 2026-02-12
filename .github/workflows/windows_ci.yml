@@ -19,6 +19,7 @@ jobs:
           make
           mingw-w64-ucrt-x86_64-mman-win32
           mingw-w64-ucrt-x86_64-headers
+          mingw-w64-ucrt-x86_64-libftdi
           mingw-w64-ucrt-x86_64-toolchain
           mingw-w64-ucrt-x86_64-gcc-fortran
           mingw-w64-ucrt-x86_64-cmake
@@ -36,6 +37,7 @@ jobs:
       # Use the 'msys2 {0}' shell to execute subsequent commands within the MSYS2 environment
       shell: msys2 {0} 
       run: |
+        pacman -S msys/libfts
         # Example commands
         uname -a
         gcc --version
