@@ -20,6 +20,7 @@ jobs:
           mingw-w64-ucrt-x86_64-mman-win32
           mingw-w64-ucrt-x86_64-headers
           mingw-w64-ucrt-x86_64-libftdi
+          mingw-w64-ucrt-x86_64-libfts
           mingw-w64-ucrt-x86_64-toolchain
           mingw-w64-ucrt-x86_64-gcc-fortran
           mingw-w64-ucrt-x86_64-cmake
