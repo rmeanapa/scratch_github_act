@@ -37,7 +37,6 @@ jobs:
       # Use the 'msys2 {0}' shell to execute subsequent commands within the MSYS2 environment
       shell: msys2 {0} 
       run: |
-        pacman -S msys/libfts
         # Example commands
         uname -a
         gcc --version
