@@ -23,6 +23,8 @@ jobs:
           mingw-w64-ucrt-x86_64-libwebsockets
           mingw-w64-ucrt-x86_64-mman-win32
           mingw-w64-ucrt-x86_64-headers
+          mingw-w64-ucrt-x86_64-headers-git
+          mingw-w64-ucrt-x86_64-wasi-libc
           mingw-w64-ucrt-x86_64-libftdi
           mingw-w64-ucrt-x86_64-libffi 
           mingw-w64-ucrt-x86_64-toolchain
