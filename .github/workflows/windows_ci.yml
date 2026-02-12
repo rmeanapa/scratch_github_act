@@ -17,6 +17,7 @@ jobs:
           git
           curl
           make
+          mingw-w64-ucrt-x86_64-mman-win32
           mingw-w64-ucrt-x86_64-headers
           mingw-w64-ucrt-x86_64-toolchain
           mingw-w64-ucrt-x86_64-gcc-fortran
