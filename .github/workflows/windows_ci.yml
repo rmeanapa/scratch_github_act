@@ -14,10 +14,12 @@ jobs:
         msystem: UCRT64 
         # Install required packages using pacman
         install: >-
+          msys2-devel
+          base-devel
+          msys2-runtime-devel
           git
           curl
           make
-          msys2-runtime-devel
           mingw-w64-ucrt-x86_64-mman-win32
           mingw-w64-ucrt-x86_64-headers
           mingw-w64-ucrt-x86_64-libftdi
