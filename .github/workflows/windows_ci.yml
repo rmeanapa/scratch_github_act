@@ -20,6 +20,7 @@ jobs:
           git
           curl
           make
+          mingw-w64-ucrt-x86_64-libtool
           mingw-w64-ucrt-x86_64-wasi-libc
           mingw-w64-ucrt-x86_64-clang
           mingw-w64-ucrt-x86_64-llvm
@@ -62,6 +63,7 @@ jobs:
       run: |
            git clone https://github.com/hael/SIMPLE.git 
            cd SIMPLE
+           gnulib-tool --import fts 
            rm -rf build
            mkdir build
            cd build
