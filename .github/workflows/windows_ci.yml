@@ -8,7 +8,7 @@ jobs:
       - run: sudo apt-get update && sudo apt-get install -y imagemagick libmagickwand-dev 
       - run: mkdir -p build && echo "Hello" > build/artifact.txt echo "<html><body><h1>CI Report</h1><p>Test Passed</p></body></html>" > build/artifact.html 
       - run: wget https://www.dartmouth.edu/emlab/images/hibim4.jpg > build/hibim4.jpg
-      - run: echo "<html><body><h1>CI Report</h1><p>Test Passed</p> <img src="build/hibim4.jpg" alt="Embedded Base64 image" width="100" height="100"> </body></html>" > build/artifact.html 
+      - run: echo "<html><body><h1>CI Report</h1><p>Test Passed</p> <img src="hibim4.jpg" alt="Embedded Base64 image" width="100" height="100"> </body></html>" > build/artifact.html 
       #- run: mkdir -p build && echo "Hello" > build/artifact.txt echo "<html><body><h1>CI Report</h1><p>Test Passed</p></body></html>" > build/artifact.html 
       #- run:  magick -size 300x200 xc:gray build/img.jpg 
       - uses: actions/upload-artifact@v4
