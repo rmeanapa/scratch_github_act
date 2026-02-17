@@ -5,8 +5,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: mkdir -p build && echo "Hello" > build/artifact.txt echo "<html><body><h1>CI Report</h1><p>Test Passed</p></body></html>" > build/artifact.html
+      - run: mkdir -p build && echo "Hello" > build/artifact.txt echo "<html><body><h1>CI Report</h1><p>Test Passed</p></body></html>" > build/artifact.html && wget https://www.dartmouth.edu/emlab/images/hibiscus1.jpg
       - uses: actions/upload-artifact@v4
         with:
           name: my-artifact
-          path: build/artifact.html
+          path: build/hibiscus1.jpg
