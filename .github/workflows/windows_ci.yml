@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      run: |
+      - run: |
         sudo apt-get update
         sudo apt-get install -y imagemagick libmagickwand-dev # libmagickwand-dev may be needed for some language bindings
       - run: mkdir -p build && echo "Hello" > build/artifact.txt echo "<html><body><h1>CI Report</h1><p>Test Passed</p></body></html>" > build/artifact.html 
