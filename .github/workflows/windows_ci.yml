@@ -10,3 +10,4 @@ jobs:
         with:
           name: my-artifact
           path: build/artifact.txt
+          path: build/artifact.html
