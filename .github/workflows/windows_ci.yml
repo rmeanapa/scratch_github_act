@@ -13,35 +13,35 @@ jobs:
         msystem: UCRT64 
         # Install required packages using pacman
         install: >-
-          msys2-devel
-          base-devel
-          msys2-runtime-devel
+          #msys2-devel
+          #base-devel
+          #msys2-runtime-devel
           git
           curl
           make
-          mingw-w64-x86_64-wasi-libc
-          mingw-w64-ucrt-x86_64-wasi-libc
-          mingw-w64-ucrt-x86_64-clang
-          mingw-w64-ucrt-x86_64-llvm
-          mingw-w64-ucrt-x86_64-libwebsockets
-          mingw-w64-ucrt-x86_64-mman-win32
-          mingw-w64-ucrt-x86_64-headers
-          mingw-w64-ucrt-x86_64-headers-git
-          mingw-w64-ucrt-x86_64-wasi-libc
-          mingw-w64-ucrt-x86_64-libftdi
-          mingw-w64-ucrt-x86_64-libffi 
-          mingw-w64-ucrt-x86_64-toolchain
-          mingw-w64-ucrt-x86_64-gcc-fortran
-          mingw-w64-ucrt-x86_64-cmake
-          mingw-w64-ucrt-x86_64-make
-          mingw-w64-ucrt-x86_64-openmp
-          mingw-w64-ucrt-x86_64-libtiff
-          mingw-w64-ucrt-x86_64-fftw
-          mingw-w64-ucrt-x86_64-libjpeg-turbo
-          mingw-w64-ucrt-x86_64-gnuplot
-          mingw-w64-ucrt-x86_64-sqlite3
-          mingw-w64-ucrt-x86_64-libwebp
-          mingw-w64-ucrt-x86_64-nvidia-cg-toolkit
+          #mingw-w64-x86_64-wasi-libc
+          #mingw-w64-ucrt-x86_64-wasi-libc
+          #mingw-w64-ucrt-x86_64-clang
+          #mingw-w64-ucrt-x86_64-llvm
+          #mingw-w64-ucrt-x86_64-libwebsockets
+          #mingw-w64-ucrt-x86_64-mman-win32
+          #mingw-w64-ucrt-x86_64-headers
+          #mingw-w64-ucrt-x86_64-headers-git
+          #mingw-w64-ucrt-x86_64-wasi-libc
+          #mingw-w64-ucrt-x86_64-libftdi
+          #mingw-w64-ucrt-x86_64-libffi 
+          #mingw-w64-ucrt-x86_64-toolchain
+          #mingw-w64-ucrt-x86_64-gcc-fortran
+          #mingw-w64-ucrt-x86_64-cmake
+          #mingw-w64-ucrt-x86_64-make
+          #mingw-w64-ucrt-x86_64-openmp
+          #mingw-w64-ucrt-x86_64-libtiff
+          #mingw-w64-ucrt-x86_64-fftw
+          #mingw-w64-ucrt-x86_64-libjpeg-turbo
+          #mingw-w64-ucrt-x86_64-gnuplot
+          #mingw-w64-ucrt-x86_64-sqlite3
+          #mingw-w64-ucrt-x86_64-libwebp
+          #mingw-w64-ucrt-x86_64-nvidia-cg-toolkit
 
     - name: Run build commands in MSYS2 shell
       # Use the 'msys2 {0}' shell to execute subsequent commands within the MSYS2 environment
@@ -52,9 +52,9 @@ jobs:
         gfortran --version
         make --version
         gcc -fopenmp --version
-        pacman -Syu
-        pacman -S base-devel
-        pacman -Qi mingw-w64-ucrt-x86_64-gcc | grep Version
+        #pacman -Syu
+        pacman -S base-devel cmake make libtiff gcc-gfortran openmp fftw gnuplot libwebp
+        #pacman -Qi mingw-w64-ucrt-x86_64-gcc | grep Version
         echo | cpp -fopenmp -dM | grep -i open
         # Add your build commands here
         #
