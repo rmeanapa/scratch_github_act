@@ -1,33 +1,73 @@
-name: Cygwin Build and Test
-
-on: [push, pull_request]
+on: [push]
 
 jobs:
+
   build:
-    runs-on: windows-latest
+    runs-on: windows-latest # MSYS2 is primarily used on Windows runners
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - uses: actions/checkout@v4 # Checkout your repository's code
+    - name: Setup MSYS2
+      uses: msys2/setup-msys2@v2
+      with:
+        # Define which MSYS2 subsystem to use (e.g., MINGW64, UCRT64, CLANG64)
+        msystem: UCRT64 
+        # Install required packages using pacman
+        install: >-
+          msys2-devel
+          base-devel
+          msys2-runtime-devel
+          git
+          curl
+          make
+          mingw-w64-x86_64-wasi-libc
+          mingw-w64-ucrt-x86_64-wasi-libc
+          mingw-w64-ucrt-x86_64-clang
+          mingw-w64-ucrt-x86_64-llvm
+          mingw-w64-ucrt-x86_64-libwebsockets
+          mingw-w64-ucrt-x86_64-mman-win32
+          mingw-w64-ucrt-x86_64-headers
+          mingw-w64-ucrt-x86_64-headers-git
+          mingw-w64-ucrt-x86_64-wasi-libc
+          mingw-w64-ucrt-x86_64-libftdi
+          mingw-w64-ucrt-x86_64-libffi 
+          mingw-w64-ucrt-x86_64-toolchain
+          mingw-w64-ucrt-x86_64-gcc-fortran
+          mingw-w64-ucrt-x86_64-cmake
+          mingw-w64-ucrt-x86_64-make
+          mingw-w64-ucrt-x86_64-openmp
+          mingw-w64-ucrt-x86_64-libtiff
+          mingw-w64-ucrt-x86_64-fftw
+          mingw-w64-ucrt-x86_64-libjpeg-turbo
+          mingw-w64-ucrt-x86_64-gnuplot
+          mingw-w64-ucrt-x86_64-sqlite3
+          mingw-w64-ucrt-x86_64-libwebp
+          mingw-w64-ucrt-x86_64-nvidia-cg-toolkit
 
-      - name: Install Cygwin
-        uses: cygwin/cygwin-install-action@master
-        with:
-          packages: >
-            make gcc-gfortran libtiff fftw fftw-devel cmake 
-            # Add all required packages here, space-separated
-
-      - name: Configure and Build
-        # Explicitly use the Cygwin bash shell for this step
-        shell: C:\cygwin\bin\bash.exe --login -o igncr -eo pipefail '{0}'
-        run: |
+    - name: Run build commands in MSYS2 shell
+      # Use the 'msys2 {0}' shell to execute subsequent commands within the MSYS2 environment
+      shell: msys2 {0} 
+      run: |
+        # Example commands
+        uname -a
+        gcc --version
+        gfortran --version
+        make --version
+        gcc -fopenmp --version
+        pacman -Qi mingw-w64-ucrt-x86_64-gcc | grep Version
+        echo | cpp -fopenmp -dM | grep -i open
+        # Add your build commands here
+        #
+    - name: Install packages
+      shell: msys2 {0} 
+      run: |
            git clone https://github.com/hael/SIMPLE.git 
            cd SIMPLE
            rm -rf build
            mkdir build
            cd build
-           cmake -DGUI=off -DUSE_LIBTIFF=off ..
-           #cmake -G "MSYS Makefiles" .. -DGUI=off -DUSE_LIBTIFF=off -DUSE_OPENMP=off
+           cmake -G "MSYS Makefiles" .. -DGUI=off -DUSE_LIBTIFF=off -DUSE_OPENMP=off
            make -j install
+
 
 
 # Template for Test interface
