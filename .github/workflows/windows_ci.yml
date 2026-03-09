@@ -10,7 +10,8 @@ jobs:
       uses: msys2/setup-msys2@v2
       with:
         # Define which MSYS2 subsystem to use (e.g., MINGW64, UCRT64, CLANG64)
-        msystem: UCRT64 
+        msystem: MSYS
+        update: true 
         # Install required packages using pacman
         install: >-
           msys2-devel
@@ -61,8 +62,8 @@ jobs:
     - name: Install packages
       shell: msys2 {0} 
       run: |
-           mkdir -p /ucrt64/include
-           cp fts.h /ucrt64/include/
+           #mkdir -p /ucrt64/include
+           #cp fts.h /ucrt64/include/
            #wget -O /ucrt64/include/fts.h  https://raw.githubusercontent.com/openbsd/src/master/include/fts.h
            gcc -v -E -x c - < /dev/null
            git clone https://github.com/hael/SIMPLE.git 
