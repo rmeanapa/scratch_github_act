@@ -1,13 +1,46 @@
-name: CI
-on: [push]
+name: Cygwin Build and Test
+
+on: [push, pull_request]
+
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
-      - run: mkdir -p build && wget -P build https://www.dartmouth.edu/emlab/images/hibim4.jpg 
-      - run: echo "<html><body><h1>SIMPLE Test Report</h1><p>Test Passed</p> <img src="hibim4.jpg" alt="Embedded Base64 image" width="100" height="100"> </body></html>" > build/artifact.html 
-      - uses: actions/upload-artifact@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Cygwin
+        uses: cygwin/cygwin-install-action@master
         with:
-          name: my-artifact
-          path: build/ 
+          packages: >
+            make gcc gfortran libtiff fftw fftw-devel cmake 
+            # Add all required packages here, space-separated
+
+      - name: Configure and Build
+        # Explicitly use the Cygwin bash shell for this step
+        shell: C:\cygwin\bin\bash.exe --login -o igncr -eo pipefail '{0}'
+        run: |
+           git clone https://github.com/hael/SIMPLE.git 
+           cd SIMPLE
+           rm -rf build
+           mkdir build
+           cd build
+           cmake -DGUI=off -DUSE_LIBTIFF=off ..
+           #cmake -G "MSYS Makefiles" .. -DGUI=off -DUSE_LIBTIFF=off -DUSE_OPENMP=off
+           make -j install
+
+
+# Template for Test interface
+#name: CI
+#on: [push]
+#jobs:
+#  build:
+#    runs-on: ubuntu-latest
+#    steps:
+#      - uses: actions/checkout@v4
+#      - run: mkdir -p build && wget -P build https://www.dartmouth.edu/emlab/images/hibim4.jpg 
+#      - run: echo "<html><body><h1>SIMPLE Test Report</h1><p>Test Passed</p> <img src="hibim4.jpg" alt="Embedded Base64 image" width="100" height="100"> </body></html>" > build/artifact.html 
+#      - uses: actions/upload-artifact@v4
+#        with:
+#          name: my-artifact
+#          path: build/ 
