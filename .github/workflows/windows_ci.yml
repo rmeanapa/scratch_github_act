@@ -52,7 +52,7 @@ jobs:
         gfortran --version
         make --version
         gcc -fopenmp --version
-        pacman -S msys/fts
+        pacman -Syu
         pacman -S base-devel
         pacman -Qi mingw-w64-ucrt-x86_64-gcc | grep Version
         echo | cpp -fopenmp -dM | grep -i open
