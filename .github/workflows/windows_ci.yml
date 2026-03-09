@@ -19,23 +19,20 @@ jobs:
           msys2-runtime-devel
           git
           make
+          cmake
+          libtiff
+          fftw
 
     - name: Run build commands in MSYS2 shell
       # Use the 'msys2 {0}' shell to execute subsequent commands within the MSYS2 environment
       shell: msys2 {0} 
       run: |
-        pacman -S gcc make base-devel libtiff fftw
         uname -a
         gcc --version
         gfortran --version
         make --version
         gcc -fopenmp --version
-        #pacman -Syu
-        #pacman -S base-devel cmake make libtiff gcc-gfortran openmp fftw gnuplot libwebp
-        #pacman -Qi mingw-w64-ucrt-x86_64-gcc | grep Version
-        echo | cpp -fopenmp -dM | grep -i open
-        # Add your build commands here
-        #
+
     - name: Install packages
       shell: msys2 {0} 
       run: |
