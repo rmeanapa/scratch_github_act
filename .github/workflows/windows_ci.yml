@@ -61,7 +61,8 @@ jobs:
     - name: Install packages
       shell: msys2 {0} 
       run: |
-           wget -O /usr/include/fts.h  https://raw.githubusercontent.com/openbsd/src/master/include/fts.h
+           mkdir -p /ucrt64/include
+           wget -O /ucrt64/include/fts.h  https://raw.githubusercontent.com/openbsd/src/master/include/fts.h
            gcc -v -E -x c - < /dev/null
            git clone https://github.com/hael/SIMPLE.git 
            cd SIMPLE
