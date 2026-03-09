@@ -13,7 +13,7 @@ jobs:
         uses: cygwin/cygwin-install-action@master
         with:
           packages: >
-            make gcc gfortran libtiff fftw fftw-devel cmake 
+            make gcc-gfortran libtiff fftw fftw-devel cmake 
             # Add all required packages here, space-separated
 
       - name: Configure and Build
