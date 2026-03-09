@@ -47,6 +47,12 @@ jobs:
       # Use the 'msys2 {0}' shell to execute subsequent commands within the MSYS2 environment
       shell: msys2 {0} 
       run: |
+        wget https://ftp.gnu.org/gnu/findutils/findutils-4.10.0.tar.xz
+        tar xf findutils-4.10.0.tar.xz
+        sudo cp findutils-4.10.0/gnulib-local/lib/fts.c /usr/include/
+        sudo cp findutils-4.10.0/gnulib-local/lib/fts_.h /usr/include/fts.h
+        sudo cd /usr/include 
+        sudo gcc -c -O2 -DFILE_OFFSET_BITS=64 fts.c -I.
         # Example commands
         uname -a
         gcc --version
