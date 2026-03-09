@@ -47,11 +47,21 @@ jobs:
       # Use the 'msys2 {0}' shell to execute subsequent commands within the MSYS2 environment
       shell: msys2 {0} 
       run: |
-        cp fts.h /usr/include//
-        cp fts.c /usr/include//
-        cd /usr/include
-        gcc -c fts.c -Wall -O2 -std=c11  
-        cd ~
+        # 1) create a working directory
+        mkdir -p ~/fts_bsd && cd ~/fts_bsd
+        # 2) download OpenBSD's fts.h and fts.c (raw files)
+        wget -O fts.h https://raw.githubusercontent.com/openbsd/src/master/include/fts.h
+        wget -O fts.c https://raw.githubusercontent.com/openbsd/src/master/lib/libc/gen/fts.c
+        # 3) (optional) inspect the files
+        head -n 40 fts.h
+        head -n 40 fts.c
+        # 4) compile only fts.c into an object
+        gcc -c -O2 -Wall -std=c11 fts.c -o fts.o
+        # 5) compile your program and link with fts.o
+        # Example: if your program is myprog.c and includes <fts.h>:
+        #gcc -O2 -Wall -std=c11 myprog.c fts.o -o myprog.exe
+        # If you prefer to install the header system-wide (requires admin rights):
+        cp fts.h /usr/include/fts.h
         # Example commands
         uname -a
         gcc --version
