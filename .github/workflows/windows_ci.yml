@@ -24,7 +24,7 @@ jobs:
       # Use the 'msys2 {0}' shell to execute subsequent commands within the MSYS2 environment
       shell: msys2 {0} 
       run: |
-        pacman -Qs gcc make base-devel libtiff fftw
+        pacman -S gcc make base-devel libtiff fftw
         uname -a
         gcc --version
         gfortran --version
