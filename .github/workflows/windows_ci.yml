@@ -20,6 +20,7 @@ jobs:
           git
           make
           cmake
+          gcc
 
     - name: Run build commands in MSYS2 shell
       # Use the 'msys2 {0}' shell to execute subsequent commands within the MSYS2 environment
