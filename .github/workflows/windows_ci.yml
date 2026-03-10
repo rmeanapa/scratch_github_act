@@ -20,13 +20,12 @@ jobs:
           git
           make
           cmake
-          libtiff
-          fftw
 
     - name: Run build commands in MSYS2 shell
       # Use the 'msys2 {0}' shell to execute subsequent commands within the MSYS2 environment
       shell: msys2 {0} 
       run: |
+        pacman -S mingw-w64-x86_64-libtiff mingw-w64-x86_64-fftw
         uname -a
         gcc --version
         gfortran --version
