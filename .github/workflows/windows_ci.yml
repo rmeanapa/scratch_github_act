@@ -26,7 +26,7 @@ jobs:
       # Use the 'msys2 {0}' shell to execute subsequent commands within the MSYS2 environment
       shell: msys2 {0} 
       run: |
-        pacman -Ss libtiff fftw 
+        pacman -S libtiff fftw 
         uname -a
         gcc --version
         gfortran --version
@@ -45,7 +45,7 @@ jobs:
            rm -rf build
            mkdir build
            cd build
-           cmake -G "MSYS Makefiles" .. -DGUI=off -DUSE_LIBTIFF=off -DUSE_OPENMP=off
+           cmake -G "MSYS Makefiles" .. 
            make -j install
 
 
