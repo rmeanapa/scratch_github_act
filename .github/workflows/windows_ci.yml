@@ -18,10 +18,18 @@ jobs:
           update: true
           install: >-
             mingw-w64-ucrt-x86_64-gcc
-            mingw-w64-ucrt-x86_64-fortran
+            mingw-w64-ucrt-x86_64-gcc-fortran
             mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-curl
             mingw-w64-ucrt-x86_64-libtiff
-            mingw-w64-ucrt-x86_64-fftw3
+            mingw-w64-ucrt-x86_64-zlib
+            mingw-w64-ucrt-x86_64-xz
+            mingw-w64-ucrt-x86_64-zstd
+            mingw-w64-ucrt-x86_64-jbigkit
+            mingw-w64-ucrt-x86_64-libwebp
+            mingw-w64-ucrt-x86_64-libdeflate
+            mingw-w64-ucrt-x86_64-fftw
+            mingw-w64-ucrt-x86_64-libjpeg-turbo
 
       - name: Configure and Build
         run: |
