@@ -42,7 +42,7 @@ jobs:
           rm -rf build
           mkdir build
           cd build
-          cmake -B build -G "Unix Makefiles" ..
+          cmake -G "Unix Makefiles" ..
           make -j install
 
 #on: [push]
