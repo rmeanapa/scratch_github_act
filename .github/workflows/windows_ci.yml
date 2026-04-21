@@ -39,12 +39,13 @@ jobs:
       - name: Configure and Build
         shell: msys2 {0}
         run: |
-          pacman -Syu
-          pacman -Fy
-          pacman -F fts.h
-          pacman -S msys2-runtime-devel
+          #pacman -Syu
+          #pacman -Fy
+          #pacman -F fts.h
+          #pacman -S msys2-runtime-devel
           git clone https://github.com/hael/SIMPLE.git 
           cd SIMPLE
+          perl -pi -e 's|^\s*#include\s*<fts\.h>|#include "fts.h"|' ./src/fileio/simple_posix.c
           rm -rf build
           mkdir build
           cd build
