@@ -30,7 +30,6 @@ jobs:
             mingw-w64-ucrt-x86_64-zstd
             mingw-w64-ucrt-x86_64-jbigkit
             mingw-w64-ucrt-x86_64-mman-win32
-            mingw-w64-ucrt-x86_64-musl-fts
             mingw-w64-ucrt-x86_64-libwebp
             mingw-w64-ucrt-x86_64-libdeflate
             mingw-w64-ucrt-x86_64-fftw
@@ -40,6 +39,7 @@ jobs:
       - name: Configure and Build
         shell: msys2 {0}
         run: |
+          pacman -S mingw-w64-ucrt-x86_64-musl-fts
           git clone https://github.com/hael/SIMPLE.git 
           cd SIMPLE
           rm -rf build
