@@ -33,8 +33,6 @@ jobs:
 
       - name: Configure and Build
         run: |
-          cmake -B build -G "MinGW Makefiles"
-          cmake --build build
           git clone https://github.com/hael/SIMPLE.git 
           cd SIMPLE
 
