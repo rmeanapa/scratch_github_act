@@ -40,6 +40,8 @@ jobs:
         shell: msys2 {0}
         run: |
           pacman -Syu
+          pacman -Fy
+          pacman -F fts.h
           pacman -S mingw-w64-ucrt-x86_64-musl-fts
           git clone https://github.com/hael/SIMPLE.git 
           cd SIMPLE
