@@ -23,6 +23,7 @@ jobs:
             mingw-w64-ucrt-x86_64-git
             mingw-w64-ucrt-x86_64-curl
             mingw-w64-ucrt-x86_64-libtiff
+            mingw-w64-ucrt-x86_64-ninja
             mingw-w64-ucrt-x86_64-zlib
             mingw-w64-ucrt-x86_64-xz
             mingw-w64-ucrt-x86_64-zstd
@@ -36,12 +37,8 @@ jobs:
         run: |
           git clone https://github.com/hael/SIMPLE.git 
           cd SIMPLE
-          rm -rf build
-          mkdir build
-          cd build
-          cmake -G "MSYS Makefiles" .. 
-          make -j install
-
+          cmake -B build -G Ninja
+          cmake --build build
 
 
 #on: [push]
