@@ -20,6 +20,7 @@ jobs:
             mingw-w64-ucrt-x86_64-gcc
             mingw-w64-ucrt-x86_64-gcc-fortran
             mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-git
             mingw-w64-ucrt-x86_64-curl
             mingw-w64-ucrt-x86_64-libtiff
             mingw-w64-ucrt-x86_64-zlib
