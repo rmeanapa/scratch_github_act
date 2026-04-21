@@ -1,37 +1,32 @@
-on: [push]
 jobs:
   build:
     runs-on: windows-latest
+    defaults:
+      run:
+        # This ensures all subsequent "run" steps use the MSYS2 bash shell
+        shell: msys2 {0}
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      # Install LibTIFF and FFTW using Chocolatey
-      - name: Install Dependencies
+      - name: Setup MSYS2 and Install Dependencies
+        uses: msys2/setup-msys2@v2
+        with:
+          msystem: UCRT64 # Modern Windows runtime (recommended)
+          update: true
+          install: >-
+            mingw-w64-ucrt-x86_64-gcc
+            mingw-w64-ucrt-x86_64-fortran
+            mingw-w64-ucrt-x86_64-cmake
+            mingw-w64-ucrt-x86_64-libtiff
+            mingw-w64-ucrt-x86_64-fftw3
+
+      - name: Configure and Build
         run: |
-          choco install libtiff
-          choco install fftw
-          choco install cmake 
-          choco install gcc 
-          choco install git 
- 
-
-      # Optional: Verify Installation (Example)
-      - name: Verify
-        run: |
-          where libtiff
-          where fftw
-          where cmake 
-          where cmake 
-
-    - name: Install packages
-      run: |
-           git clone https://github.com/hael/SIMPLE.git 
-           cd SIMPLE
-#           rm -rf build
-#           mkdir build
-#           cd build
-#           cmake -G "MSYS Makefiles" .. 
-#           make -j install
+          cmake -B build -G "MinGW Makefiles"
+          cmake --build build
+          git clone https://github.com/hael/SIMPLE.git 
+          cd SIMPLE
 
 
 #on: [push]
