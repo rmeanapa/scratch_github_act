@@ -46,6 +46,7 @@ jobs:
           git clone https://github.com/hael/SIMPLE.git 
           cd SIMPLE
           perl -pi -e 's|^\s*#include\s*<fts\.h>|#include "fts.h"|' ./src/fileio/simple_posix.c
+          perl -pi -e 's|^(file\(GLOB FILEIO_src\s+["'\'']fileio/\*\.\[Ff\]\[90\]\[08\]["'\'']\))|$1\nlist(APPEND FILEIO_src "fileio/fts.c")|;' src/CMakeLists.txt
           rm -rf build
           mkdir build
           cd build
