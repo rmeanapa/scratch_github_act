@@ -29,9 +29,11 @@ jobs:
             mingw-w64-ucrt-x86_64-xz
             mingw-w64-ucrt-x86_64-zstd
             mingw-w64-ucrt-x86_64-jbigkit
+            mingw-w64-ucrt-x86_64-mman-win32
             mingw-w64-ucrt-x86_64-libwebp
             mingw-w64-ucrt-x86_64-libdeflate
             mingw-w64-ucrt-x86_64-fftw
+            mingw-w64-ucrt-x86_64-libjpeg-turbo
             mingw-w64-ucrt-x86_64-libjpeg-turbo
 
       - name: Configure and Build
