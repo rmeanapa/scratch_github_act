@@ -17,6 +17,7 @@ jobs:
           msystem: UCRT64 # Modern Windows runtime (recommended)
           update: true
           install: >-
+            make
             mingw-w64-ucrt-x86_64-gcc
             mingw-w64-ucrt-x86_64-gcc-fortran
             mingw-w64-ucrt-x86_64-cmake
@@ -34,12 +35,14 @@ jobs:
             mingw-w64-ucrt-x86_64-libjpeg-turbo
 
       - name: Configure and Build
+        shell: msys2 {0}
         run: |
           git clone https://github.com/hael/SIMPLE.git 
           cd SIMPLE
-          cmake -B build -G Ninja
-          cmake --build build
-
+          rm -rf build
+          cd build
+          cmake -B build -G "Unix Makefiles" ..
+          make -j install
 
 #on: [push]
 #
