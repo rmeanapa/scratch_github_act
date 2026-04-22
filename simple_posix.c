@@ -16,8 +16,12 @@
 #define _BSD_SOURCE
 #define __DARWIN_C_SOURCE
 #endif
+#ifndef _WIN32
 #include <sys/types.h>
+#endif
+#ifndef _WIN32
 #include <sys/mman.h>
+#endif
 #ifndef _WIN32
 #include <sys/stat.h>
 #else
@@ -59,7 +63,9 @@ static int waitpid(pid_t pid, int *status, int options) { return -1; }
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>          /*     extern int errno;   */
+#ifndef _WIN32
 #include <pwd.h>
+#endif
 #include <stdio.h>
 #include <stdlib.h>
 #ifndef _WIN32
@@ -139,12 +145,26 @@ typedef struct {
 static int glob(const char *pattern, int flags, void *errfunc, glob_t *pglob) { return GLOB_NOMATCH; }
 static void globfree(glob_t *pglob) { }
 #endif
+#ifndef _WIN32
 #include <regex.h>
+#else
+// Windows stub for regex_t and regex functions
+typedef int regex_t;
+#define REG_EXTENDED 0
+#define REG_ICASE 0
+#define REG_NOSUB 0
+static int regcomp(regex_t *preg, const char *regex, int cflags) { return -1; }
+static int regexec(const regex_t *preg, const char *string, size_t nmatch, void *pmatch, int eflags) { return -1; }
+static void regfree(regex_t *preg) { }
+static int regerror(int errcode, const regex_t *preg, char *errbuf, size_t errbuf_size) { return 0; }
+#endif
 #include <limits.h>      /* PATH_MAX */
 #ifdef __linux__
 #include<linux/limits.h>
 #endif
+#ifndef _WIN32
 #include <ftw.h>
+#endif
 /* By default, print all messages of severity info and above.  */
 #ifdef _DEBUG
 static int global_debug = 3;
@@ -602,7 +622,9 @@ int  get_absolute_pathname(char* in, int* inlen, char* out, int* outlen)
 #include <mach/vm_task.h>
 #include <mach/task.h>
 #else
+#ifndef _WIN32
 #include <sys/sysinfo.h>
+#endif
 #endif
 int get_sysinfo(long* HWMusage, long*totalram, long* sharedram, long* bufferram, long* totalhigh)
 {
