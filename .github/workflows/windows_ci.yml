@@ -34,18 +34,13 @@ jobs:
             mingw-w64-ucrt-x86_64-libdeflate
             mingw-w64-ucrt-x86_64-fftw
             mingw-w64-ucrt-x86_64-libjpeg-turbo
-            mingw-w64-ucrt-x86_64-libjpeg-turbo
 
       - name: Configure and Build
         shell: msys2 {0}
         run: |
-          #pacman -Syu
-          #pacman -Fy
-          #pacman -F fts.h
-          #pacman -S msys2-runtime-devel
           git clone https://github.com/hael/SIMPLE.git 
-          cp simple_posix.c ./SIMPLE/src/fileio//
-	  #cp starfile_filename.h ./SIMPLE/src/extlibs/starfile//
+          cp simple_posix.c ./SIMPLE/src/fileio/
+	  cp starfile_filename.h ./SIMPLE/src/extlibs/starfile/
           cd SIMPLE
           #perl -pi -e 's|^\s*#include\s*<fts\.h>|#include "fts.h"|' ./src/fileio/simple_posix.c
           #perl -pi -e 's|^(file\(GLOB FILEIO_src\s+["'\'']fileio/\*\.\[Ff\]\[90\]\[08\]["'\'']\))|$1\nlist(APPEND FILEIO_src "fileio/fts.c")|;' src/CMakeLists.txt
