@@ -1,170 +1,128 @@
-cmake_minimum_required(VERSION 3.25 FATAL_ERROR)
-
-# Make sure CMake can see our helper modules early
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
-
-# Auto-detect GCC/GFortran BEFORE project() if user didn’t set compilers
-include(AutoDetectGCC)
+# src/CMakeLists.txt
+#
+# Builds the SIMPLE shared library (${SIMPLELIB})
 
 # ------------------------------------------------------------------------------
-# Project
+# Generated sources (simple_args + varlist)
 # ------------------------------------------------------------------------------
-project(SIMPLE
-    VERSION 3.0.0
-    DESCRIPTION "SIMPLE cryo-EM image processing"
-    HOMEPAGE_URL "https://github.com/hael/SIMPLE"
-    LANGUAGES Fortran C CXX)
+set(SIMPLE_GEN_DIR "${SIMPLE_BINARY_LIB_DIR}")  # from root
 
-# Export compile_commands.json for tooling
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+add_custom_command(
+    OUTPUT
+        "${SIMPLE_GEN_DIR}/simple_args.f90"
+        "${SIMPLE_GEN_DIR}/simple_varlist.txt"
+    COMMAND SIMPLE_PATH=${CMAKE_BINARY_DIR}
+            "${CMAKE_SOURCE_DIR}/scripts/simple_args_generator.pl"
+    DEPENDS
+        "${CMAKE_SOURCE_DIR}/scripts/simple_args_generator.pl"
+        "${CMAKE_CURRENT_SOURCE_DIR}/main/simple_parameters.f90"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/main"
+    COMMENT "Generating simple_args.f90 and simple_varlist.txt"
+    VERBATIM
+)
 
-# ------------------------------------------------------------------------------
-# Build options
-# ------------------------------------------------------------------------------
-# OpenMP is effectively required (always ON by default)
-option(USE_OPENMP   "Use OpenMP for parallelization" ON)
+add_custom_target(simple_args
+    DEPENDS
+        "${SIMPLE_GEN_DIR}/simple_args.f90"
+        "${SIMPLE_GEN_DIR}/simple_varlist.txt"
+)
 
-# Future / optional parallel models
-option(USE_OPENACC  "Use OpenACC for GPU acceleration (experimental)" OFF)
-option(USE_COARRAYS "Use Fortran coarrays for parallelization (experimental)" OFF)
-option(USE_MPI      "Use MPI for parallelization" OFF)
-option(USE_ARCHOPT  "Use architecture optimization" ON)
-option(BUILD_TESTS  "Build test executables" ON)
-option(BUILD_DOCS   "Build documentation" OFF)
-option(NICE         "Install NICE" OFF)
-
-# Always build static library (faster compilation while developing)
-set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build as shared or static" FORCE)
-
-# ------------------------------------------------------------------------------
-# Install layout & default build type
-# ------------------------------------------------------------------------------
-include(GNUInstallDirs)
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    # Local install by default (easy testing / packaging)
-    set(CMAKE_INSTALL_PREFIX
-        "${CMAKE_BINARY_DIR}"
-        CACHE PATH "Installation prefix" FORCE)
-endif()
-# Reasonable default build type
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS Debug Release RelWithDebInfo MinSizeRel)
-endif()
-
-# ------------------------------------------------------------------------------
-# Fortran modules & generated headers
-# ------------------------------------------------------------------------------
-set(CMAKE_Fortran_MODULE_DIRECTORY "${PROJECT_BINARY_DIR}/modules")
-file(MAKE_DIRECTORY "${CMAKE_Fortran_MODULE_DIRECTORY}")
-# Where various generated files go
-set(SIMPLE_BINARY_LIB_DIR "${CMAKE_BINARY_DIR}/lib/simple")
-file(MAKE_DIRECTORY "${SIMPLE_BINARY_LIB_DIR}")
-include_directories("${SIMPLE_BINARY_LIB_DIR}")
-# Git version information (best-effort)
-set(SIMPLE_GIT_VERSION "not known")
-if(EXISTS "${CMAKE_SOURCE_DIR}/.git")
-    find_package(Git QUIET)
-    if(Git_FOUND)
-        execute_process(
-            COMMAND "${GIT_EXECUTABLE}" describe --abbrev=8 --always
-            WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
-            OUTPUT_VARIABLE SIMPLE_GIT_VERSION
-            ERROR_QUIET
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-        )
-        set(SIMPLE_GIT_VERSION "git${SIMPLE_GIT_VERSION}")
-    else()
-        set(SIMPLE_GIT_VERSION "-${PROJECT_VERSION}")
-    endif()
-else()
-    set(SIMPLE_GIT_VERSION "-${PROJECT_VERSION}")
-endif()
-message(STATUS "Git version: ${SIMPLE_GIT_VERSION}")
-# Generate SimpleGitVersion.h
-configure_file(
-    "${CMAKE_SOURCE_DIR}/cmake/GitVersion.h.in"
-    "${SIMPLE_BINARY_LIB_DIR}/SimpleGitVersion.h"
-    @ONLY
+# Git commit hash insertion (side-effect script)
+add_custom_target(simple_git
+    COMMAND SIMPLE_PATH=${CMAKE_BINARY_DIR}
+            "${CMAKE_SOURCE_DIR}/scripts/insert_git_commit_hash.pl"
+    DEPENDS "${CMAKE_SOURCE_DIR}/scripts/insert_git_commit_hash.pl"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/main"
+    COMMENT "Inserting git commit hash"
+    VERBATIM
 )
 
 # ------------------------------------------------------------------------------
-# Compiler configuration (GCC/GFortran 14+, flags, RPATH, etc.)
+# Sources
 # ------------------------------------------------------------------------------
-include(CompilerConfig)
+file(GLOB DEFS_src               "defs/*.[Ff][90][08]")
+file(GLOB GNUFOR_src             "extlibs/gnufor/*.[Ff][90][08]")
+file(GLOB JSON_src               "extlibs/json/*.[Ff][90][08]")
+file(GLOB NETLIB_src             "extlibs/netlib/*.[Ff][90][08]")
+file(GLOB STARFILE_src           "extlibs/starfile/*.cpp")
+file(GLOB UNIX_src               "extlibs/unix/src/*.[Ff][90][08]")
+file(GLOB CURL_src               "extlibs/curl/src/*.[Ff][90][08]" "extlibs/curl/src/*.c")
+file(GLOB XML_src                "extlibs/xml/*/*.[Ff][90][08]")
+file(GLOB CPLOT2D_src            "extlibs/CPlot2D/*.cpp" "extlibs/CPlot2D/*.[Ff][90][08]")
+file(GLOB_RECURSE UTILS_src      "utils/*.[Ff][90][08]")
+file(GLOB FILEIO_src             "fileio/*.[Ff][90][08]")
+file(GLOB_RECURSE SIMPLE_src     "main/*.[Ff][90][08]")
 
-# ------------------------------------------------------------------------------
-# Dependencies (OpenMP, FFTW, TIFF, MPI, etc.)
-#   -> populates SIMPLE_LIBRARIES
-# ------------------------------------------------------------------------------
-include(Dependencies)
-# # Library target name used in subdirs
-set(SIMPLELIB "SIMPLE${PROJECT_VERSION}")
+# JPG sources including C
+file(GLOB JPG_src "extlibs/jpg/*.[Ff][90][08]")
+list(APPEND JPG_src "extlibs/jpg/stb_image_write.c")
+list(APPEND JPG_src "extlibs/tiff/libtiff_funs.c")
 
-# ------------------------------------------------------------------------------
-# Subdirectories
-# ------------------------------------------------------------------------------
-add_subdirectory(src)         # builds shared library ${SIMPLELIB}
-add_subdirectory(production)  # executables + tests
-add_subdirectory(scripts)
-if(EXISTS "${CMAKE_SOURCE_DIR}/nice" AND NICE)
-    add_subdirectory(nice)
-endif()
-if(BUILD_DOCS AND EXISTS "${CMAKE_SOURCE_DIR}/doc")
-    add_subdirectory(doc)
-endif()
+# FILEIO C sources
+list(APPEND FILEIO_src "fileio/simple_posix.c")
+list(APPEND FILEIO_src "fileio/symlink_stub.c")
 
-# ------------------------------------------------------------------------------
-# Testing
-# ------------------------------------------------------------------------------
-include(CTest)
-if(BUILD_TESTS)
-    enable_testing()
-    add_custom_target(check COMMAND ${CMAKE_CTEST_COMMAND})
-endif()
+# Generated simple_args.f90
+list(APPEND SIMPLE_src "${SIMPLE_GEN_DIR}/simple_args.f90")
 
-# ------------------------------------------------------------------------------
-# Environment setup scripts
-# ------------------------------------------------------------------------------
-configure_file(
-    "${CMAKE_SOURCE_DIR}/scripts/add2.bashrc.template"
-    "${CMAKE_BINARY_DIR}/add2.bashrc"
-    @ONLY
-)
-configure_file(
-    "${CMAKE_SOURCE_DIR}/scripts/add2.tcshrc.template"
-    "${CMAKE_BINARY_DIR}/add2.tcshrc"
-    @ONLY
-)
-install(FILES
-    "${CMAKE_BINARY_DIR}/add2.bashrc"
-    "${CMAKE_BINARY_DIR}/add2.tcshrc"
-    DESTINATION "${CMAKE_INSTALL_PREFIX}"
+set(SIMPLE_ALL_SOURCES
+    ${DEFS_src}
+    ${GNUFOR_src}
+    ${JSON_src}
+    ${UTILS_src}
+    ${FILEIO_src}
+    ${STARFILE_src}
+    ${CPLOT2D_src}
+    ${NETLIB_src}
+    ${XML_src}
+    ${UNIX_src}
+    ${CURL_src}
+    ${JPG_src}
+    ${SIMPLE_src}
 )
 
 # ------------------------------------------------------------------------------
-# Summary
+# Library target
 # ------------------------------------------------------------------------------
-message(STATUS "========================================")
-message(STATUS "SIMPLE Configuration Summary")
-message(STATUS "========================================")
-message(STATUS "Version:              ${PROJECT_VERSION}")
-message(STATUS "Git version:          ${SIMPLE_GIT_VERSION}")
-message(STATUS "Build type:           ${CMAKE_BUILD_TYPE}")
-message(STATUS "Install prefix:       ${CMAKE_INSTALL_PREFIX}")
-message(STATUS "Fortran compiler:     ${CMAKE_Fortran_COMPILER} (${CMAKE_Fortran_COMPILER_ID} ${CMAKE_Fortran_COMPILER_VERSION})")
-message(STATUS "C compiler:           ${CMAKE_C_COMPILER} (${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION})")
-message(STATUS "C++ compiler:         ${CMAKE_CXX_COMPILER} (${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION})")
-message(STATUS "----------------------------------------")
-message(STATUS "OpenMP:               ${USE_OPENMP}")
-message(STATUS "NICE:                 ${NICE}")
-message(STATUS "OpenACC:              ${USE_OPENACC}")
-message(STATUS "Coarrays:             ${USE_COARRAYS}")
-message(STATUS "MPI:                  ${USE_MPI}")
-message(STATUS "ARCHOPT:              ${USE_ARCHOPT}")
-message(STATUS "Build tests:          ${BUILD_TESTS}")
-message(STATUS "========================================")
 
-# Add message at end of installation
-add_subdirectory(${CMAKE_SOURCE_DIR}/cmake/PostInstall)
+add_library(${SIMPLELIB} STATIC ${SIMPLE_ALL_SOURCES})
 
+add_dependencies(${SIMPLELIB} simple_args simple_git)
+
+set_target_properties(${SIMPLELIB} PROPERTIES
+    VERSION                 ${PROJECT_VERSION}
+    SOVERSION               ${PROJECT_VERSION_MAJOR}
+    Fortran_MODULE_DIRECTORY "${CMAKE_Fortran_MODULE_DIRECTORY}"
+    POSITION_INDEPENDENT_CODE ON
+)
+
+target_link_libraries(${SIMPLELIB}
+    PUBLIC
+        ${SIMPLE_LIBRARIES}
+)
+
+target_include_directories(${SIMPLELIB}
+    PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/inc>
+        $<BUILD_INTERFACE:${CMAKE_Fortran_MODULE_DIRECTORY}>
+        $<INSTALL_INTERFACE:include>
+        $<BUILD_INTERFACE:${SIMPLE_GEN_DIR}>
+)
+
+# ------------------------------------------------------------------------------
+# Installation
+# ------------------------------------------------------------------------------
+install(TARGETS ${SIMPLELIB}
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+)
+# Install Fortran modules
+install(DIRECTORY "${CMAKE_Fortran_MODULE_DIRECTORY}/"
+    DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/simple"
+    FILES_MATCHING PATTERN "*.mod"
+)
+# Install varlist for command line argument error checking
+install(FILES "${SIMPLE_GEN_DIR}/simple_varlist.txt"
+    DESTINATION "${CMAKE_INSTALL_LIBDIR}/simple"
+)
