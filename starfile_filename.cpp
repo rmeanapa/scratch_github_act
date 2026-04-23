@@ -507,7 +507,11 @@ int mktree(const FileName &fn_dir, mode_t mode)
         if (dir.size() == 0)
             continue;
 
+        #ifdef _WIN32
+        if ((mdret = mkdir(dir.c_str())) && errno != EEXIST)
+        #else
         if ((mdret = mkdir(dir.c_str(), mode)) && errno != EEXIST)
+        #endif
         {
             return mdret;
         }
