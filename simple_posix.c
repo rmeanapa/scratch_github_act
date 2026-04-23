@@ -50,13 +50,7 @@ static int stat(const char *path, struct stat *buf) {
 #define WNOHANG 1
 #define WUNTRACED 2
 #define WCONTINUED 4
-#ifndef HAVE_PID_T
-#ifndef _PID_T_DEFINED
-#ifndef _PID_T
-typedef int pid_t;
-#endif
-#endif
-#endif
+/* Do not define pid_t on Windows, system headers provide it. */
 static int waitpid(pid_t pid, int *status, int options) { return -1; }
 #define WIFEXITED(x) 0
 #define WIFSIGNALED(x) 0
