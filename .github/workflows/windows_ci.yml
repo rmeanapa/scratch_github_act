@@ -52,10 +52,10 @@ jobs:
           cd build
           cmake -G "Unix Makefiles" ..
           make -j install
-          set SIMPLE_EMAIL=my.name@uni.edu
-          set SIMPLE_QSYS=local
-          set SIMPLE_PATH=%GITHUB_WORKSPACE%\\build
-          set PATH=%SIMPLE_PATH%\\scripts;%SIMPLE_PATH%\\bin;%PATH%
+          export SIMPLE_EMAIL="my.name@uni.edu"
+          export SIMPLE_QSYS="local"
+          export SIMPLE_PATH="$GITHUB_WORKSPACE/build"
+          export PATH="$SIMPLE_PATH/scripts:$SIMPLE_PATH/bin:$PATH"
           simple_test_units
 
 #on: [push]
