@@ -339,7 +339,7 @@ int makedir(char *path,
     }
     char _path[LONGSTRLEN];
     char *p;
-    extern int errno;
+    // errno is provided by <errno.h> and system headers; do not redeclare.
     errno = 0;
 
     /* Copy string so its mutable */
