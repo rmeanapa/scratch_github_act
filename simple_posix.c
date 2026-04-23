@@ -365,7 +365,11 @@ int makedir(char *path,
             /* Temporarily truncate */
             *p = '\0';
 
+            #ifdef _WIN32
+            if(mkdir(_path) != 0) {
+            #else
             if(mkdir(_path, S_IRWXU|S_IRWXG) != 0) {
+            #endif
                 if(errno != EEXIST) {
                     fprintf(stderr, "makedir %s\nerrno:%d msg:%s\n", _path, errno, strerror(errno));
                     perror("Failed : mkdir in simple_posix::makedir");
@@ -375,7 +379,11 @@ int makedir(char *path,
             *p = '/';
         }
     }
+    #ifdef _WIN32
+    if(mkdir(_path) != 0) {
+    #else
     if(mkdir(_path, S_IRWXU|S_IRWXG) != 0) {
+    #endif
         if(errno != EEXIST) {
             fprintf(stderr, "makedir %s\nerrno:%d msg:%s\n", _path, errno, strerror(errno));
             perror("Failed : mkdir in simple_posix::makedir");
@@ -497,7 +505,7 @@ int list_dirs(char * path, int*len, char * fout, int*len_fout, int* count, size_
         perror("Failed : simple_posix.c::list_dirs ");
         return -1;
     }
-    extern int errno;
+    // errno is provided by <errno.h> and system headers; do not redeclare.
     DIR *d;
     int fcount = 0;
     d = opendir(cpath);
@@ -567,14 +575,25 @@ char * lrealpath(const char *filename)
        to realpath() (it could always overflow).  On those systems, we
        skip this.  */
     /* Find out the max path size.  */
+    #ifdef _WIN32
+    long path_max = 260; // MAX_PATH for Windows
+    #else
     long path_max = pathconf("/", _PC_PATH_MAX);
+    #endif
     if(path_max > 0) {
         /* PATH_MAX is bounded.  */
         char *buf, *rp, *ret;
         buf = (char *) malloc(path_max);
         if(buf == NULL)
             return NULL;
+        #ifdef _WIN32
+        // Windows: no realpath, just copy filename (not robust, but avoids build error)
+        strncpy(buf, filename, path_max);
+        buf[path_max-1] = '\0';
+        rp = buf;
+        #else
         rp = realpath(filename, buf);
+        #endif
         ret = strdup(rp ? rp : filename);
         free(buf);
         return ret;
@@ -690,21 +709,29 @@ int get_sysinfo(long* HWMusage, long*totalram, long* sharedram, long* bufferram,
     *totalhigh = free_memory + used_memory; /* Total high water mark memory size */
     *HWMusage =  used_memory;               /* high memory size used */
 
+        #elif defined(_WIN32)
+        // Not available on Windows, stub out
+        *totalram = 0;
+        *sharedram = 0;
+        *bufferram = 0;
+        *totalhigh = 0;
+        *HWMusage = 0;
+        return 0;
 #else
-    struct sysinfo s;
-    if( sysinfo(&s) ) {
-      perror("simple_posix.c::get_sysinfo unable to get mem usage by calling sysinfo");
-      return -1;
-    } else {
-      *totalram = s.totalram;           /* Total usable main memory size */
-      //*freeram=s.freeram;               /* Available memory size */
-      *sharedram = s.sharedram;       /* Amount of shared memory */
-      *bufferram = s.bufferram;              /* Memory used by buffers */
-      *totalhigh = s.totalhigh;              /* Total high memory size */
-      *HWMusage = s.totalhigh - s.freehigh; /* high memory size used */
-    }
+        struct sysinfo s;
+        if( sysinfo(&s) ) {
+            perror("simple_posix.c::get_sysinfo unable to get mem usage by calling sysinfo");
+            return -1;
+        } else {
+            *totalram = s.totalram;           /* Total usable main memory size */
+            //*freeram=s.freeram;               /* Available memory size */
+            *sharedram = s.sharedram;       /* Amount of shared memory */
+            *bufferram = s.bufferram;              /* Memory used by buffers */
+            *totalhigh = s.totalhigh;              /* Total high memory size */
+            *HWMusage = s.totalhigh - s.freehigh; /* high memory size used */
+        }
 #endif
-    return 0;
+        return 0;
 }
 
 int unlink_cb(const char *fpath, const struct stat *sb, int typeflag, struct FTW *ftwbuf)
