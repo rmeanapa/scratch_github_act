@@ -47,13 +47,16 @@ jobs:
           cp posix_stubs_win32.c ./SIMPLE/src/fileio/posix_stubs_win32.c
           cp CMakeLists.txt ./SIMPLE/src/
           cd SIMPLE
-          #perl -pi -e 's|^\s*#include\s*<fts\.h>|#include "fts.h"|' ./src/fileio/simple_posix.c
-          #perl -pi -e 's|^(file\(GLOB FILEIO_src\s+["'\'']fileio/\*\.\[Ff\]\[90\]\[08\]["'\'']\))|$1\nlist(APPEND FILEIO_src "fileio/fts.c")|;' src/CMakeLists.txt
           rm -rf build
           mkdir build
           cd build
           cmake -G "Unix Makefiles" ..
           make -j install
+          export SIMPLE_EMAIL="my.name@uni.edu"
+          export SIMPLE_QSYS="local"
+          export SIMPLE_PATH=$GITHUB_WORKSPACE/build
+          export PATH=${SIMPLE_PATH}/scripts:${SIMPLE_PATH}/bin:${PATH}
+          simple_test_units
 
 #on: [push]
 #
