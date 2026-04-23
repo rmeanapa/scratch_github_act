@@ -45,7 +45,6 @@ static int stat(const char *path, struct stat *buf) {
     buf->st_mode = attr;
     return 0;
 }
-#endif
 #ifndef _WIN32
 #include <fts.h>               /* file traversal */
 #endif
