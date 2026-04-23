@@ -50,8 +50,13 @@ static int stat(const char *path, struct stat *buf) {
 #include <fts.h>               /* file traversal */
 #endif
 #include <fcntl.h>           /* Definition of AT_* constants */
+#endif
+/* FTW struct for file tree walk: POSIX or stub for Windows */
 #ifndef _WIN32
+#ifndef _WIN32
+#else
 #include <sys/wait.h>
+#endif
 #else
 // Windows stub for waitpid and macros
 #include <sys/types.h> /* for pid_t */
@@ -159,6 +164,9 @@ typedef int regex_t;
 #define REG_EXTENDED 0
 #define REG_ICASE 0
 #define REG_NOSUB 0
+#ifndef REG_NOMATCH
+#define REG_NOMATCH -1
+#endif
 static int regcomp(regex_t *preg, const char *regex, int cflags) { return -1; }
 static int regexec(const regex_t *preg, const char *string, size_t nmatch, void *pmatch, int eflags) { return -1; }
 static void regfree(regex_t *preg) { }
