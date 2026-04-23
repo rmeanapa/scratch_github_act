@@ -159,7 +159,7 @@ static int regerror(int errcode, const regex_t *preg, char *errbuf, size_t errbu
 #endif
 #include <limits.h>      /* PATH_MAX */
 #ifdef __linux__
-#include<linux/limits.h>
+#include <limits.h>
 #endif
 #ifndef _WIN32
 #include <ftw.h>
