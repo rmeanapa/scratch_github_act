@@ -72,12 +72,6 @@ static int waitpid(pid_t pid, int *status, int options) { return -1; }
 #include <unistd.h>       /* getpid()  */
 #else
 #include <process.h>
-#ifndef HAVE_GETPID
-#ifndef _GETPID_DEFINED
-/* Only define if not already declared by system headers */
-static int getpid(void) { return _getpid(); }
-#endif
-#endif
 #endif
 #ifdef _WIN32
 #include <windows.h>
