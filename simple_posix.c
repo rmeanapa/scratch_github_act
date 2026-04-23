@@ -32,6 +32,13 @@ struct stat {
 #define S_IFMT 0
 #define S_IFDIR FILE_ATTRIBUTE_DIRECTORY
 #define S_ISDIR(m) (((m) & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY)
+/* Define POSIX permission macros as no-ops for Windows */
+#ifndef S_IRWXU
+#define S_IRWXU 0777
+#endif
+#ifndef S_IRWXG
+#define S_IRWXG 0070
+#endif
 static int stat(const char *path, struct stat *buf) {
     DWORD attr = GetFileAttributesA(path);
     if (attr == INVALID_FILE_ATTRIBUTES) return -1;
