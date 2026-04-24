@@ -265,24 +265,27 @@ void f2cstr(char* f_str, char* c_str, unsigned length)
 int isdir(char* pathname, int* len, size_t ivf_pathname)
 {
     if(pathname == NULL  || *len < 1) {
+        fprintf(stderr, "DEBUG: isdir called with NULL or empty path\n");
         perror("Failed : simple_posix.c::isdir inputs poorly defined");
         return 0;
     }
-    //printf("isdir pathname :%s: len %d\n",  pathname, *len);
     char* cpathname = F90to_cstring(pathname, *len);
     if(!cpathname) {
-        printf("%d %s\nisdir failed to create str %s\n", errno, strerror(errno), pathname);
+        fprintf(stderr, "%d %s\nisdir failed to create str %s\n", errno, strerror(errno), pathname);
         perror("Failed : simple_posix.c::isdir ");
         return 0;
     }
-    dgprintf(stderr, "DEBUG: In simple_posix.c::isdir pathname :%s:\n",  cpathname);
+    fprintf(stderr, "DEBUG: isdir checking path: '%s'\n", cpathname);
 
     struct stat ibuf;
     int i = stat(cpathname, &ibuf);
+    fprintf(stderr, "DEBUG: stat('%s') returned %d, errno=%d\n", cpathname, i, errno);
+    if(i == 0) {
+        fprintf(stderr, "DEBUG: stat succeeded, st_mode=0x%lx\n", (unsigned long)ibuf.st_mode);
+    }
     free(cpathname);
     if(i != 0) {
-
-        dgprintf(stderr, "DEBUG: In simple_posix.c::isdir pathname :%s: does not exist\n",  cpathname);
+        fprintf(stderr, "DEBUG: In simple_posix.c::isdir path does not exist\n");
         //printf("%d %s\nisdir failed to create stat struct %s\n", errno, strerror(errno), cpathname);
         //perror("Failed : simple_posix.c::isdir ");
         return 0;
