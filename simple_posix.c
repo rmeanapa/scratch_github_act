@@ -265,27 +265,24 @@ void f2cstr(char* f_str, char* c_str, unsigned length)
 int isdir(char* pathname, int* len, size_t ivf_pathname)
 {
     if(pathname == NULL  || *len < 1) {
-        fprintf(stderr, "DEBUG: isdir called with NULL or empty path\n");
         perror("Failed : simple_posix.c::isdir inputs poorly defined");
         return 0;
     }
+    //printf("isdir pathname :%s: len %d\n",  pathname, *len);
     char* cpathname = F90to_cstring(pathname, *len);
     if(!cpathname) {
-        fprintf(stderr, "%d %s\nisdir failed to create str %s\n", errno, strerror(errno), pathname);
+        printf("%d %s\nisdir failed to create str %s\n", errno, strerror(errno), pathname);
         perror("Failed : simple_posix.c::isdir ");
         return 0;
     }
-    fprintf(stderr, "DEBUG: isdir checking path: '%s'\n", cpathname);
+    dgprintf(stderr, "DEBUG: In simple_posix.c::isdir pathname :%s:\n",  cpathname);
 
     struct stat ibuf;
     int i = stat(cpathname, &ibuf);
-    fprintf(stderr, "DEBUG: stat('%s') returned %d, errno=%d\n", cpathname, i, errno);
-    if(i == 0) {
-        fprintf(stderr, "DEBUG: stat succeeded, st_mode=0x%lx\n", (unsigned long)ibuf.st_mode);
-    }
     free(cpathname);
     if(i != 0) {
-        fprintf(stderr, "DEBUG: In simple_posix.c::isdir path does not exist\n");
+
+        dgprintf(stderr, "DEBUG: In simple_posix.c::isdir pathname :%s: does not exist\n",  cpathname);
         //printf("%d %s\nisdir failed to create stat struct %s\n", errno, strerror(errno), cpathname);
         //perror("Failed : simple_posix.c::isdir ");
         return 0;
@@ -321,6 +318,34 @@ int makedir(char *path,
 
       EMLINK The number of links to the parent directory would exceed LINK_MAX.
 
+      ENAMETOOLONG
+      pathname was too long.
+
+      ENOENT A directory component in pathname does not exist or is a dangling
+      symbolic link.
+
+      ENOMEM Insufficient kernel memory was available.
+
+      ENOSPC The device containing pathname has no room for the new directory.
+
+      ENOSPC The new directory cannot be created because the user's disk quota is
+      exhausted.
+
+      ENOTDIR
+      A component used as a directory in pathname is not, in fact, a directory.
+
+      EPERM The filesystem containing pathname does not support the creation of
+      directories.
+
+      EROFS  pathname refers to a file on a read-only filesystem.
+
+      The following additional errors can occur for mkdirat():
+
+      EBADF  dirfd is not a valid file descriptor.
+
+      ENOTDIR pathname is relative and dirfd is a file descriptor referring to a
+      file other than a directory.
+    */
     #ifdef _WIN32
     char _path[LONGSTRLEN];
     char *p;
@@ -334,45 +359,17 @@ int makedir(char *path,
     for(p = _path + 1; *p; p++) {
         if(*p == '/') {
             *p = '\0';
-            fprintf(stderr, "DEBUG: Attempting to create directory: '%s'\n", _path);
-            int ret = _mkdir(_path);
-            fprintf(stderr, "DEBUG: _mkdir returned %d, errno=%d\n", ret, errno);
-            if(ret != 0 && errno != EEXIST) {
-                fprintf(stderr, "makedir %s\nerrno:%d msg:%s\n", _path, errno, strerror(errno));
-                perror("Failed : _mkdir in simple_posix::makedir");
-                return -1;
+            if(_mkdir(_path) != 0) {
+                if(errno != EEXIST) {
+                    fprintf(stderr, "makedir %s\nerrno:%d msg:%s\n", _path, errno, strerror(errno));
+                    perror("Failed : _mkdir in simple_posix::makedir");
+                    return -1;
+                }
             }
             *p = '/';
         }
     }
-    fprintf(stderr, "DEBUG: Attempting to create directory: '%s'\n", _path);
-    int ret = _mkdir(_path);
-    fprintf(stderr, "DEBUG: _mkdir returned %d, errno=%d\n", ret, errno);
-    if(ret != 0 && errno != EEXIST) {
-        fprintf(stderr, "makedir %s\nerrno:%d msg:%s\n", _path, errno, strerror(errno));
-        perror("Failed : _mkdir in simple_posix::makedir");
-        return -1;
-    }
-    return 0;
-    strncpy(_path, path, *charLen);
-    _path[*charLen] = '\0';
-    for(p = _path + 1; *p; p++) {
-        if(*p == '/') {
-            *p = '\0';
-            fprintf(stderr, "DEBUG: Attempting to create directory: '%s'\n", _path);
-            int ret = _mkdir(_path);
-            fprintf(stderr, "DEBUG: _mkdir returned %d, errno=%d\n", ret, errno);
-            if(i != 0) {
-                fprintf(stderr, "DEBUG: In simple_posix.c::isdir path does not exist\n");
-                return 0;
-            }
-            int isdir_result = S_ISDIR(ibuf.st_mode) ? 1 : 0;
-            fprintf(stderr, "DEBUG: S_ISDIR(%lx) = %d\n", (unsigned long)ibuf.st_mode, isdir_result);
-            return isdir_result;
-    fprintf(stderr, "DEBUG: Attempting to create directory: '%s'\n", _path);
-    int ret = _mkdir(_path);
-    fprintf(stderr, "DEBUG: _mkdir returned %d, errno=%d\n", ret, errno);
-    if(ret != 0) {
+    if(_mkdir(_path) != 0) {
         if(errno != EEXIST) {
             fprintf(stderr, "makedir %s\nerrno:%d msg:%s\n", _path, errno, strerror(errno));
             perror("Failed : _mkdir in simple_posix::makedir");
@@ -466,7 +463,7 @@ int removedir(char *path, int* len, int* count, size_t ivf_path)
 
       EROFS  pathname refers to a directory on a read-only filesystem.
     */
-    char *cpath = F90to_cstring(path, *charLen);
+    char *cpath = F90to_cstring(path, *len);
     if(cpath == NULL) {
         printf("%d %s\n removedir failed to convert string (unprotected) %s\n", errno, strerror(errno), path);
         perror("Failed : simple_posix.c::remove_dir ");
@@ -478,12 +475,12 @@ int removedir(char *path, int* len, int* count, size_t ivf_path)
     errno = 0;
 
     /* Copy string so its mutable */
-    if(*charLen > (int)sizeof(_path) - 1) {
+    if(*len > (int)sizeof(_path) - 1) {
         errno = ENAMETOOLONG;
         free(cpath);
         return -1;
     }
-    strncpy(_path, cpath, *charLen);
+    strncpy(_path, cpath, *len);
     free(cpath);
     printf("DEBUG:in removedir  rmdir %s\n", _path);
     if(rmdir(_path) != 0) {
@@ -491,7 +488,7 @@ int removedir(char *path, int* len, int* count, size_t ivf_path)
             return -1;
     }
     /* Iterate the string */
-    for(p = _path + *charLen - 1; *p; p--) {
+    for(p = _path + *len - 1; *p; p--) {
         if(*p == '/') {
             /* Temporarily truncate */
             *p = '\0';
@@ -513,6 +510,7 @@ int removedir(char *path, int* len, int* count, size_t ivf_path)
             return -1;
         }
     }
+    *count = 1;
     printf("DEBUG:in removedir  completed rmdir %s\n", _path);
     return 0;
 }
