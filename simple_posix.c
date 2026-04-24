@@ -1,3 +1,7 @@
+/* Windows stub for struct FTW to silence warnings about incomplete type in parameter list */
+#ifdef _WIN32
+struct FTW { int dummy; };
+#endif
 /**
  *   simple_posix.c
  *   \brief POSIX system calls for SIMPLE
@@ -6,9 +10,6 @@
  *
  *   Michael Eager   2018
  */
-#ifdef _WIN32
-struct FTW { int dummy; };
-#endif
 #define  _POSIX_C_SOURCE 200809L
 #define _THREAD_SAFE
 #define _SVID_SOURCE
@@ -373,12 +374,11 @@ int makedir(char *path,
         if(*p == '/') {
             /* Temporarily truncate */
             *p = '\0';
-
-            #ifdef _WIN32
+#ifdef _WIN32
             if(mkdir(_path) != 0) {
-            #else
+#else
             if(mkdir(_path, S_IRWXU|S_IRWXG) != 0) {
-            #endif
+#endif
                 if(errno != EEXIST) {
                     fprintf(stderr, "makedir %s\nerrno:%d msg:%s\n", _path, errno, strerror(errno));
                     perror("Failed : mkdir in simple_posix::makedir");
@@ -388,17 +388,19 @@ int makedir(char *path,
             *p = '/';
         }
     }
-    #ifdef _WIN32
+#ifdef _WIN32
     if(mkdir(_path) != 0) {
-    #else
+#else
     if(mkdir(_path, S_IRWXU|S_IRWXG) != 0) {
-    #endif
+#endif
         if(errno != EEXIST) {
             fprintf(stderr, "makedir %s\nerrno:%d msg:%s\n", _path, errno, strerror(errno));
             perror("Failed : mkdir in simple_posix::makedir");
             return -1;
         }
     }
+    return 0;
+}
     return 0;
 }
 
