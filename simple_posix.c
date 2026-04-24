@@ -47,7 +47,7 @@ static int stat(const char *path, struct stat *buf) {
     if (attr == INVALID_FILE_ATTRIBUTES) return -1;
     buf->st_mode = attr;
     return 0;
-}
+// End of makedir
 #ifndef _WIN32
 #include <fts.h>               /* file traversal */
 #endif
