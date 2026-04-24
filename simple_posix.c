@@ -321,34 +321,6 @@ int makedir(char *path,
 
       EMLINK The number of links to the parent directory would exceed LINK_MAX.
 
-      ENAMETOOLONG
-      pathname was too long.
-
-      ENOENT A directory component in pathname does not exist or is a dangling
-      symbolic link.
-
-      ENOMEM Insufficient kernel memory was available.
-
-      ENOSPC The device containing pathname has no room for the new directory.
-
-      ENOSPC The new directory cannot be created because the user's disk quota is
-      exhausted.
-
-      ENOTDIR
-      A component used as a directory in pathname is not, in fact, a directory.
-
-      EPERM The filesystem containing pathname does not support the creation of
-      directories.
-
-      EROFS  pathname refers to a file on a read-only filesystem.
-
-      The following additional errors can occur for mkdirat():
-
-      EBADF  dirfd is not a valid file descriptor.
-
-      ENOTDIR pathname is relative and dirfd is a file descriptor referring to a
-      file other than a directory.
-    */
     #ifdef _WIN32
     char _path[LONGSTRLEN];
     char *p;
@@ -357,6 +329,31 @@ int makedir(char *path,
         errno = ENAMETOOLONG;
         return -1;
     }
+    strncpy(_path, path, *charLen);
+    _path[*charLen] = '\0';
+    for(p = _path + 1; *p; p++) {
+        if(*p == '/') {
+            *p = '\0';
+            fprintf(stderr, "DEBUG: Attempting to create directory: '%s'\n", _path);
+            int ret = _mkdir(_path);
+            fprintf(stderr, "DEBUG: _mkdir returned %d, errno=%d\n", ret, errno);
+            if(ret != 0 && errno != EEXIST) {
+                fprintf(stderr, "makedir %s\nerrno:%d msg:%s\n", _path, errno, strerror(errno));
+                perror("Failed : _mkdir in simple_posix::makedir");
+                return -1;
+            }
+            *p = '/';
+        }
+    }
+    fprintf(stderr, "DEBUG: Attempting to create directory: '%s'\n", _path);
+    int ret = _mkdir(_path);
+    fprintf(stderr, "DEBUG: _mkdir returned %d, errno=%d\n", ret, errno);
+    if(ret != 0 && errno != EEXIST) {
+        fprintf(stderr, "makedir %s\nerrno:%d msg:%s\n", _path, errno, strerror(errno));
+        perror("Failed : _mkdir in simple_posix::makedir");
+        return -1;
+    }
+    return 0;
     strncpy(_path, path, *charLen);
     _path[*charLen] = '\0';
     for(p = _path + 1; *p; p++) {
