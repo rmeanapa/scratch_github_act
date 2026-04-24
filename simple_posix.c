@@ -346,8 +346,39 @@ int makedir(char *path,
       ENOTDIR pathname is relative and dirfd is a file descriptor referring to a
       file other than a directory.
     */
+    #ifdef _WIN32
+    char _path[LONGSTRLEN];
+    char *p;
+    errno = 0;
+    if(*charLen > sizeof(_path) - 1) {
+        errno = ENAMETOOLONG;
+        return -1;
+    }
+    strncpy(_path, path, *charLen);
+    _path[*charLen] = '\0';
+    for(p = _path + 1; *p; p++) {
+        if(*p == '/') {
+            *p = '\0';
+            if(_mkdir(_path) != 0) {
+                if(errno != EEXIST) {
+                    fprintf(stderr, "makedir %s\nerrno:%d msg:%s\n", _path, errno, strerror(errno));
+                    perror("Failed : _mkdir in simple_posix::makedir");
+                    return -1;
+                }
+            }
+            *p = '/';
+        }
+    }
+    if(_mkdir(_path) != 0) {
+        if(errno != EEXIST) {
+            fprintf(stderr, "makedir %s\nerrno:%d msg:%s\n", _path, errno, strerror(errno));
+            perror("Failed : _mkdir in simple_posix::makedir");
+            return -1;
+        }
+    }
+    return 0;
+    #else
     char *cpath = F90to_cstring(path, *charLen);
-    // fprintf(stderr, "makedir  %d  %d %s  %s\n",  *charLen, strlen(path), path, cpath);
     if(cpath == NULL) {
         printf("%d %s\n makedir failed to convert string (unprotected) %s\n", errno, strerror(errno), path);
         perror("Failed : simple_posix.c::remove_dir ");
@@ -355,30 +386,18 @@ int makedir(char *path,
     }
     char _path[LONGSTRLEN];
     char *p;
-    // errno is provided by <errno.h> and system headers; do not redeclare.
     errno = 0;
-
-    /* Copy string so its mutable */
     if(*charLen > sizeof(_path) - 1) {
         errno = ENAMETOOLONG;
         free(cpath);
         return -1;
     }
-
     strcpy(_path, cpath);
-    // fprintf(stderr, "makedir %d [%s]\n" , strlen(_path), _path);
     free(cpath);
-    /* Iterate the string */
     for(p = _path + 1; *p; p++) {
         if(*p == '/') {
-            /* Temporarily truncate */
             *p = '\0';
-
-            #ifdef _WIN32
-            if(mkdir(_path) != 0) {
-            #else
             if(mkdir(_path, S_IRWXU|S_IRWXG) != 0) {
-            #endif
                 if(errno != EEXIST) {
                     fprintf(stderr, "makedir %s\nerrno:%d msg:%s\n", _path, errno, strerror(errno));
                     perror("Failed : mkdir in simple_posix::makedir");
@@ -388,11 +407,7 @@ int makedir(char *path,
             *p = '/';
         }
     }
-    #ifdef _WIN32
-    if(mkdir(_path) != 0) {
-    #else
     if(mkdir(_path, S_IRWXU|S_IRWXG) != 0) {
-    #endif
         if(errno != EEXIST) {
             fprintf(stderr, "makedir %s\nerrno:%d msg:%s\n", _path, errno, strerror(errno));
             perror("Failed : mkdir in simple_posix::makedir");
@@ -400,6 +415,7 @@ int makedir(char *path,
         }
     }
     return 0;
+    #endif
 }
 
 // Recursive remove directory
