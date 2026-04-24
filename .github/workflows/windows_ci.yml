@@ -56,6 +56,9 @@ jobs:
           export SIMPLE_QSYS="local"
           export SIMPLE_PATH="$GITHUB_WORKSPACE/build"
           export PATH="$SIMPLE_PATH/scripts:$SIMPLE_PATH/bin:$PATH"
+          ls -l $SIMPLE_PATH/bin
+          ls -l $SIMPLE_PATH/scripts
+          $SIMPLE_PATH/bin/scripts/simple_test_units
           simple_test_units
 
 #on: [push]
