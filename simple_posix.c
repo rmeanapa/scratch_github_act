@@ -466,7 +466,7 @@ int removedir(char *path, int* len, int* count, size_t ivf_path)
 
       EROFS  pathname refers to a directory on a read-only filesystem.
     */
-    char *cpath = F90to_cstring(path, *len);
+    char *cpath = F90to_cstring(path, *charLen);
     if(cpath == NULL) {
         printf("%d %s\n removedir failed to convert string (unprotected) %s\n", errno, strerror(errno), path);
         perror("Failed : simple_posix.c::remove_dir ");
@@ -478,12 +478,12 @@ int removedir(char *path, int* len, int* count, size_t ivf_path)
     errno = 0;
 
     /* Copy string so its mutable */
-    if(*len > (int)sizeof(_path) - 1) {
+    if(*charLen > (int)sizeof(_path) - 1) {
         errno = ENAMETOOLONG;
         free(cpath);
         return -1;
     }
-    strncpy(_path, cpath, *len);
+    strncpy(_path, cpath, *charLen);
     free(cpath);
     printf("DEBUG:in removedir  rmdir %s\n", _path);
     if(rmdir(_path) != 0) {
@@ -491,7 +491,7 @@ int removedir(char *path, int* len, int* count, size_t ivf_path)
             return -1;
     }
     /* Iterate the string */
-    for(p = _path + *len - 1; *p; p--) {
+    for(p = _path + *charLen - 1; *p; p--) {
         if(*p == '/') {
             /* Temporarily truncate */
             *p = '\0';
