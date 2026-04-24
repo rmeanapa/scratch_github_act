@@ -365,16 +365,13 @@ int makedir(char *path,
             fprintf(stderr, "DEBUG: Attempting to create directory: '%s'\n", _path);
             int ret = _mkdir(_path);
             fprintf(stderr, "DEBUG: _mkdir returned %d, errno=%d\n", ret, errno);
-            if(ret != 0) {
-                if(errno != EEXIST) {
-                    fprintf(stderr, "makedir %s\nerrno:%d msg:%s\n", _path, errno, strerror(errno));
-                    perror("Failed : _mkdir in simple_posix::makedir");
-                    return -1;
-                }
+            if(i != 0) {
+                fprintf(stderr, "DEBUG: In simple_posix.c::isdir path does not exist\n");
+                return 0;
             }
-            *p = '/';
-        }
-    }
+            int isdir_result = S_ISDIR(ibuf.st_mode) ? 1 : 0;
+            fprintf(stderr, "DEBUG: S_ISDIR(%lx) = %d\n", (unsigned long)ibuf.st_mode, isdir_result);
+            return isdir_result;
     fprintf(stderr, "DEBUG: Attempting to create directory: '%s'\n", _path);
     int ret = _mkdir(_path);
     fprintf(stderr, "DEBUG: _mkdir returned %d, errno=%d\n", ret, errno);
