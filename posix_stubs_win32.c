@@ -1,4 +1,4 @@
-ifdef _WIN32
+#ifdef _WIN32
 #include <errno.h>
 #include <stddef.h>
 #include <sys/types.h>

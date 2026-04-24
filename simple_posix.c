@@ -65,7 +65,7 @@ static int stat(const char *path, struct stat *buf) {
 #define WNOHANG 1
 #define WUNTRACED 2
 #define WCONTINUED 4
-int waitpid(pid_t pid, int *status, int options) { return -1; }
+static int waitpid(pid_t pid, int *status, int options) { return -1; }
 #define WIFEXITED(x) 0
 #define WIFSIGNALED(x) 0
 #define WIFSTOPPED(x) 0
