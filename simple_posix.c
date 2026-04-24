@@ -1,7 +1,3 @@
-/* Windows stub for struct FTW to silence warnings about incomplete type in parameter list */
-#ifdef _WIN32
-struct FTW { int dummy; };
-#endif
 /**
  *   simple_posix.c
  *   \brief POSIX system calls for SIMPLE
@@ -10,6 +6,9 @@ struct FTW { int dummy; };
  *
  *   Michael Eager   2018
  */
+#ifdef _WIN32
+struct FTW { int dummy; };
+#endif
 #define  _POSIX_C_SOURCE 200809L
 #define _THREAD_SAFE
 #define _SVID_SOURCE
