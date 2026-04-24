@@ -513,7 +513,6 @@ int removedir(char *path, int* len, int* count, size_t ivf_path)
             return -1;
         }
     }
-    *count = 1;
     printf("DEBUG:in removedir  completed rmdir %s\n", _path);
     return 0;
 }
