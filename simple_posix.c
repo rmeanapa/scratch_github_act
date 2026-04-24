@@ -25,8 +25,10 @@ struct FTW { int dummy; };
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h> // for open, O_RDWR, O_CREAT
-#else
+ #else
 #include <windows.h>
+#include <direct.h> // for _mkdir
+#define mkdir _mkdir
 struct stat {
     DWORD st_mode;
 };
