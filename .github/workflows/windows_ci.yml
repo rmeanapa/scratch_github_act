@@ -44,7 +44,6 @@ jobs:
           cp starfile_filename.cpp ./SIMPLE/src/extlibs/starfile/
           cp starfile_table.cpp ./SIMPLE/src/extlibs/starfile/
           cp symlink_stub.c ./SIMPLE/src/fileio/symlink_stub.c
-          cp posix_stubs_win32.c ./SIMPLE/src/fileio/posix_stubs_win32.c
           cp CMakeLists.txt ./SIMPLE/src/
           cp simple_test_units.f90 ./SIMPLE/production/tests/ 
           cd SIMPLE

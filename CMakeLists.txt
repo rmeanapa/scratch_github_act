@@ -59,18 +59,11 @@ list(APPEND JPG_src "extlibs/jpg/stb_image_write.c")
 list(APPEND JPG_src "extlibs/tiff/libtiff_funs.c")
 
 # FILEIO C sources
-
-
 list(APPEND FILEIO_src "fileio/simple_posix.c")
 
 # Add Windows-only stubs
 if(WIN32)
     list(APPEND FILEIO_src "fileio/symlink_stub.c")
-    list(APPEND FILEIO_src "fileio/posix_stubs_win32.c")
-endif()
-
-# Add POSIX stubs for Windows only
-if(WIN32)
     list(APPEND FILEIO_src "fileio/posix_stubs_win32.c")
 endif()
 
