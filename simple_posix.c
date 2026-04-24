@@ -1,3 +1,7 @@
+/* Windows stub for struct FTW to silence warnings about incomplete type in parameter list */
+#ifdef _WIN32
+struct FTW { int dummy; };
+#endif
 /**
  *   simple_posix.c
  *   \brief POSIX system calls for SIMPLE
@@ -18,12 +22,9 @@
 #endif
 #ifndef _WIN32
 #include <sys/types.h>
-#endif
-#ifndef _WIN32
 #include <sys/mman.h>
-#endif
-#ifndef _WIN32
 #include <sys/stat.h>
+#include <fcntl.h> // for open, O_RDWR, O_CREAT
 #else
 #include <windows.h>
 struct stat {
