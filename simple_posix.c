@@ -359,7 +359,10 @@ int makedir(char *path,
     for(p = _path + 1; *p; p++) {
         if(*p == '/') {
             *p = '\0';
-            if(_mkdir(_path) != 0) {
+            fprintf(stderr, "DEBUG: Attempting to create directory: '%s'\n", _path);
+            int ret = _mkdir(_path);
+            fprintf(stderr, "DEBUG: _mkdir returned %d, errno=%d\n", ret, errno);
+            if(ret != 0) {
                 if(errno != EEXIST) {
                     fprintf(stderr, "makedir %s\nerrno:%d msg:%s\n", _path, errno, strerror(errno));
                     perror("Failed : _mkdir in simple_posix::makedir");
@@ -369,7 +372,10 @@ int makedir(char *path,
             *p = '/';
         }
     }
-    if(_mkdir(_path) != 0) {
+    fprintf(stderr, "DEBUG: Attempting to create directory: '%s'\n", _path);
+    int ret = _mkdir(_path);
+    fprintf(stderr, "DEBUG: _mkdir returned %d, errno=%d\n", ret, errno);
+    if(ret != 0) {
         if(errno != EEXIST) {
             fprintf(stderr, "makedir %s\nerrno:%d msg:%s\n", _path, errno, strerror(errno));
             perror("Failed : _mkdir in simple_posix::makedir");
