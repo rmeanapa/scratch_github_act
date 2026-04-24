@@ -47,7 +47,6 @@ jobs:
           cp posix_stubs_win32.c ./SIMPLE/src/fileio/posix_stubs_win32.c
           cp CMakeLists.txt ./SIMPLE/src/
           cp simple_test_units.f90 ./SIMPLE/production/tests/ 
-          cp simple_test_install.f90 ./SIMPLE/production/tests/ 
           cd SIMPLE
           rm -rf build
           mkdir build
@@ -58,8 +57,6 @@ jobs:
           export SIMPLE_QSYS="local"
           export SIMPLE_PATH="$GITHUB_WORKSPACE/SIMPLE/build"
           export PATH="$SIMPLE_PATH/scripts:$SIMPLE_PATH/bin:$PATH"
-          cd ~
-          simple_test_install
           simple_test_units
 
 #on: [push]
