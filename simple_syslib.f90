@@ -488,14 +488,14 @@ contains
         endif
         io_status = 0
         tmpdir_str = trim(adjustl(tmpdir))
-        print *, 'DEBUG: dir_exists(', trim(tmpdir_str), ') = ', dir_exists(tmpdir_str)
+        print *, 'DEBUG: dir_exists(', trim(tmpdir_str%to_char()), ') = ', dir_exists(tmpdir_str)
         if(.not. dir_exists(tmpdir_str)) then
             print *, 'DEBUG: makedir will be called for ', trim(tmpdir)
             allocate(path, source=trim(tmpdir)//c_null_char)
             io_status = makedir(trim(adjustl(path)), len_trim(tmpdir))
             print *, 'DEBUG: makedir returned ', io_status, ' for ', trim(tmpdir)
             path_str = trim(adjustl(path))
-            print *, 'DEBUG: dir_exists(', trim(path_str), ') after makedir = ', dir_exists(path_str)
+            print *, 'DEBUG: dir_exists(', trim(path_str%to_char()), ') after makedir = ', dir_exists(path_str)
             if(.not. dir_exists(path_str)) then
                 if( l_verbose )write(logfhandle,*)" syslib:: simple_mkdir failed to create "//trim(path)
                 if(.not. ignore_here)then
