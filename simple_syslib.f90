@@ -504,12 +504,9 @@ contains
             endif
             deallocate(path)
         end if
-        call tmpdir_str%kill
-        call path_str%kill
+        ! Removed invalid calls to %kill on CHARACTER variables
     end subroutine simple_mkdir
-        call tmpdir_str%kill
-        call path_str%kill
-    end subroutine simple_mkdir
+ 
     subroutine simple_rmdir( d, status )
         class(*),          intent(in)  :: d
         integer, optional, intent(out) :: status
