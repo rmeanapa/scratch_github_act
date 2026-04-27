@@ -24,7 +24,9 @@ struct FTW { int dummy; };
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h> // for open, O_RDWR, O_CREAT
- #else
+#include <fts.h>               /* file traversal */
+#include <sys/wait.h>
+#else
 #include <windows.h>
 #include <direct.h> // for _mkdir
 #define mkdir _mkdir
@@ -47,18 +49,10 @@ static int stat(const char *path, struct stat *buf) {
     buf->st_mode = attr;
     return 0;
 }
-#ifndef _WIN32
-#include <fts.h>               /* file traversal */
-#endif
 #include <fcntl.h>           /* Definition of AT_* constants */
 #endif
 /* FTW struct for file tree walk: POSIX or stub for Windows */
-#ifndef _WIN32
-#ifndef _WIN32
-#else
-#include <sys/wait.h>
-#endif
-#else
+#ifdef _WIN32
 // Windows stub for waitpid and macros
 #include <sys/types.h> /* for pid_t */
 #define WNOHANG 1
@@ -612,10 +606,7 @@ char * lrealpath(const char *filename)
         if(buf == NULL)
             return NULL;
         #ifdef _WIN32
-        // Windows: no realpath, just copy filename (not robust, but avoids build error)
-        strncpy(buf, filename, path_max);
-        buf[path_max-1] = '\0';
-        rp = buf;
+        rp = _fullpath(buf, filename, path_max);
         #else
         rp = realpath(filename, buf);
         #endif
@@ -652,7 +643,9 @@ int  get_absolute_pathname(char* in, int* inlen, char* out, int* outlen)
     out[*outlen] = '\0';
 
     c2fstr(resolved, out, *outlen, sizeof(resolved));
+#ifndef _WIN32
     out[0] = '/';
+#endif
 
     free(filein);
     free(resolved);

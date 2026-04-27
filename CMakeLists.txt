@@ -69,11 +69,6 @@ if(WIN32)
     list(APPEND FILEIO_src "fileio/posix_stubs_win32.c")
 endif()
 
-# Add POSIX stubs for Windows only
-if(WIN32)
-    list(APPEND FILEIO_src "fileio/posix_stubs_win32.c")
-endif()
-
 # Generated simple_args.f90
 list(APPEND SIMPLE_src "${SIMPLE_GEN_DIR}/simple_args.f90")
 
