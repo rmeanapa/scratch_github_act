@@ -223,12 +223,10 @@ subroutine exec_test_install( self, cline )
     call img%kill
     write(logfhandle,*)'>>> WROTE TEST VOLUME cubes.mrc'
     ! test units
-    if( is_windows_host() )then
-        command = PATH_PARENT//'simple_test_units.exe'
-    else
-        command = PATH_PARENT//'simple_test_units'
-    endif
+    call simple_chdir(PATH_PARENT)
+    command = 'simple_test_units'
     call exec_cmdline( trim(command) )
+    call simple_chdir(folder)
     ! test search
     ! command = 'simple_test_srch vol1=cubes.mrc msk='//int2str(msk)//&
     !     & ' smpd='//real2str(smpd)
