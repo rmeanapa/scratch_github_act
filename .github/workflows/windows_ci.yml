@@ -55,8 +55,6 @@ jobs:
           cp posix_stubs_win32.c ./SIMPLE/src/fileio/posix_stubs_win32.c
           cp symlink_stub.c ./SIMPLE/src/fileio/symlink_stub.c
           cp CMakeLists.txt ./SIMPLE/src/
-          cp simple_test_units.f90 ./SIMPLE/production/tests/ 
-          cp simple_test_install.f90 ./SIMPLE/production/tests/ 
           cd SIMPLE
           rm -rf build
           mkdir build
