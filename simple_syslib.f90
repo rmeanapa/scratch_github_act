@@ -228,6 +228,14 @@ contains
         envval = trim(adjustl(retval))
     end function simple_getenv
 
+    logical function is_windows_host()
+        integer      :: status
+        type(string) :: envval
+
+        envval = simple_getenv('OS', status)
+        is_windows_host = status == 0 .and. envval%has_substr('Windows_NT')
+    end function is_windows_host
+
     !> \brief Touch file, create file if necessary
     subroutine simple_touch( fname )
         class(*), intent(in)  :: fname
@@ -634,8 +642,17 @@ contains
         integer                    :: sz, funit, ios, i, nlines, pid
         pid     = getpid()
         tmpfile = '__simple_filelist_'//int2str(pid)//'__'
-        cmd     = 'ls -1f '//trim(pattern)//' > '//tmpfile%to_char()
+        if( is_windows_host() )then
+            cmd = 'cmd /c dir /b "'//trim(pattern)//'" > "'//tmpfile%to_char()//'"'
+        else
+            cmd = 'ls -1f '//trim(pattern)//' > '//tmpfile%to_char()
+        endif
         call exec_cmdline( cmd, suppress_errors=.true.)
+        if( .not. file_exists(tmpfile) )then
+            if( allocated(list) ) deallocate(list)
+            allocate(list(0))
+            return
+        endif
         inquire(file=tmpfile%to_char(), size=sz)
         if( allocated(list) ) deallocate(list)
         if( sz > 0 )then
@@ -657,6 +674,7 @@ contains
             enddo
             close(funit, status='delete')
         else
+            allocate(list(0))
             open(newunit=funit, file=tmpfile%to_char())
             close(funit, status='delete')
         endif
@@ -677,12 +695,23 @@ contains
         if( present(chronological) ) l_chrono = chronological
         tmpfile = '__simple_filelist_'//int2str(part_glob)//'__'
         ! builds command
-        if( l_chrono )then
+        if( is_windows_host() )then
+            if( l_chrono )then
+                cmd = 'powershell -NoProfile -Command "Get-ChildItem -Path '''//dir%to_char()//''' -File | Sort-Object LastWriteTime | Where-Object { $_.Name -match '''//adjustl(trim(regexp))//''' } | ForEach-Object { $_.Name }" > "'//tmpfile%to_char()//'"'
+            else
+                cmd = 'powershell -NoProfile -Command "Get-ChildItem -Path '''//dir%to_char()//''' -File | Where-Object { $_.Name -match '''//adjustl(trim(regexp))//''' } | ForEach-Object { $_.Name }" > "'//tmpfile%to_char()//'"'
+            endif
+        else if( l_chrono )then
             cmd = 'ls -1f -rt '//dir%to_char()//' | grep -E '''//adjustl(trim(regexp))//''' > '//tmpfile%to_char()
         else
             cmd = 'ls -1f '//dir%to_char()//' | grep -E '''//adjustl(trim(regexp))//''' > '//tmpfile%to_char()
         endif
         call exec_cmdline(cmd, suppress_errors=.true.)
+        if( .not. file_exists(tmpfile) )then
+            if( allocated(list) ) deallocate(list)
+            allocate(list(0))
+            return
+        endif
         inquire(file=tmpfile%to_char(), size=sz)
         if( allocated(list) ) deallocate(list)
         if( sz > 0 )then
@@ -704,6 +733,7 @@ contains
             enddo
             close(funit, status='delete')
         else
+            allocate(list(0))
             open(newunit=funit, file=tmpfile%to_char())
             close(funit, status='delete')
         endif
