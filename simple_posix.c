@@ -373,6 +373,7 @@ int makedir(char *path,
     return 0;
     #else
     char *cpath = F90to_cstring(path, *charLen);
+    // fprintf(stderr, "makedir  %d  %d %s  %s\n",  *charLen, strlen(path), path, cpath);
     if(cpath == NULL) {
         printf("%d %s\n makedir failed to convert string (unprotected) %s\n", errno, strerror(errno), path);
         perror("Failed : simple_posix.c::remove_dir ");
@@ -381,15 +382,19 @@ int makedir(char *path,
     char _path[LONGSTRLEN];
     char *p;
     errno = 0;
+    /* Copy string so its mutable */
     if(*charLen > sizeof(_path) - 1) {
         errno = ENAMETOOLONG;
         free(cpath);
         return -1;
     }
     strcpy(_path, cpath);
+    // fprintf(stderr, "makedir %d [%s]\n" , strlen(_path), _path);
     free(cpath);
+    /* Iterate the string */
     for(p = _path + 1; *p; p++) {
         if(*p == '/') {
+            /* Temporarily truncate */
             *p = '\0';
             if(mkdir(_path, S_IRWXU|S_IRWXG) != 0) {
                 if(errno != EEXIST) {

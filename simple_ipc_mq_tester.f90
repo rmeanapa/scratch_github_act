@@ -50,7 +50,7 @@ contains
 
   ! Run all ipc_mq unit tests. Linux-only; compiled to a no-op elsewhere.
   subroutine run_all_ipc_mq_tests()
-#if defined(_WIN32) || defined(WIN32) || defined(MACOSX) || defined(__APPLE__) || !defined(__linux__)
+#if defined(_WIN32) || defined(WIN32) || defined(MACOSX) || defined(__APPLE__) 
     return
 #else
     write(*,'(A)') '**** running all ipc mq tests ****'
