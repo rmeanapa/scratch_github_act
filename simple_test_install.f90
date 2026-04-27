@@ -1,6 +1,7 @@
 !@descr: for testing a SIMPLE installation, generates an image stack of cubes and runs all the unit tests
 program simple_test_install
 use simple_core_module_api
+use simple_syslib, only: is_windows_host
 use simple_testfuns ! use all in there
 use simple_image,  only: image
 implicit none
@@ -37,7 +38,11 @@ call img%write(string('cubes.mrc'))
 call img%kill
 write(logfhandle,*)'>>> WROTE TEST VOLUME cubes.mrc'
 ! test units
-command = 'simple_test_units'
+if( is_windows_host() )then
+    command = 'simple_test_units.exe'
+else
+    command = './simple_test_units'
+endif
 call exec_cmdline( trim(command) )
 ! test search
 ! command = 'simple_test_srch vol1=cubes.mrc msk='//int2str(msk)//&
