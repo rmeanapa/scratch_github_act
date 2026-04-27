@@ -309,14 +309,6 @@ contains
         call del_file('exec_test.txt')
     end subroutine test_exec_cmdline
 
-    logical function is_windows_host()
-        integer      :: status
-        type(string) :: envval
-
-        envval = simple_getenv('OS', status)
-        is_windows_host = status == 0 .and. envval%has_substr('Windows_NT')
-    end function is_windows_host
-
     !---------------- get_process_id ----------------
 
     subroutine test_get_process_id()
