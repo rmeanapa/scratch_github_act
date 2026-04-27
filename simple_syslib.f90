@@ -495,7 +495,7 @@ contains
             print *, 'DEBUG: simple_mkdir - makedir returned ', io_status, ' for ', trim(tmpdir)
             path_str = trim(adjustl(path))
             if(.not. dir_exists(path_str)) then
-                print *, 'DEBUG: simple_mkdir - directory still does not exist after makedir: ', trim(path_str)
+                print *, 'DEBUG: simple_mkdir - directory still does not exist after makedir: ', trim(path)
                 if( l_verbose )write(logfhandle,*)" syslib:: simple_mkdir failed to create "//trim(path)
                 if(.not. ignore_here)then
                     if(io_status /= 0) call simple_error_check(io_status, &
