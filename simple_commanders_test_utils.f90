@@ -224,9 +224,9 @@ subroutine exec_test_install( self, cline )
     write(logfhandle,*)'>>> WROTE TEST VOLUME cubes.mrc'
     ! test units
     if( is_windows_host() )then
-        command = 'simple_test_units.exe'
+        command = PATH_PARENT//'simple_test_units.exe'
     else
-        command = './simple_test_units'
+        command = PATH_PARENT//'simple_test_units'
     endif
     call exec_cmdline( trim(command) )
     ! test search
