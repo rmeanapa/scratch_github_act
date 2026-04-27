@@ -78,10 +78,19 @@ call test_ftiter
 call test_multinomal
 call test_euler_shift
 call simple_test_fit_line
+write(*,*) 'ENTERING test_aff_prop'
+flush(OUTPUT_UNIT)
 call test_aff_prop
+write(*,*) 'COMPLETED test_aff_prop'
+flush(OUTPUT_UNIT)
+write(*,*) 'ENTERING test_hclust'
+flush(OUTPUT_UNIT)
 call test_hclust
+write(*,*) 'COMPLETED test_hclust'
+flush(OUTPUT_UNIT)
 call simple_chdir( "../" )
 call simple_end('**** SIMPLE_UNIT_TEST NORMAL STOP ****')
+flush(OUTPUT_UNIT)
 
 contains
 
