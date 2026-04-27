@@ -1,7 +1,6 @@
 !@descr: clustering of a similartity matrix using affinity propagation
 module simple_aff_prop
 use simple_core_module_api
-use simple_syslib, only: is_windows_host
 implicit none
 
 public :: aff_prop, test_aff_prop
@@ -244,11 +243,11 @@ contains
         integer, allocatable :: centers(:), labels(:)
         integer              :: i, j, ncls, nerr, nper, ntot
         write(logfhandle,'(a)') '**info(simple_aff_prop_unit_test): testing all functionality'
-        if( is_windows_host() )then
-            nper = 40
-        else
-            nper = 300
-        endif
+#if defined(_WIN32)
+        nper = 40
+#else
+        nper = 300
+#endif
         ntot = 3 * nper
         allocate(datavecs(ntot,5), simmat(ntot,ntot))
         ! make data
