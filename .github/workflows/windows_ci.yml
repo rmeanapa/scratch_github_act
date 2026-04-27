@@ -45,7 +45,6 @@ jobs:
           cp simple_fileio.f90 ./SIMPLE/src/fileio/
           cp simple_ipc_mq_tester.f90 ./SIMPLE/src/utils/comm/
           cp simple_forked_process_tester.f90 ./SIMPLE/src/utils/
-          cp simple_ipc_mq.f90 ./SIMPLE/src/utils/comm/
           cp starfile_filename.h ./SIMPLE/src/extlibs/starfile/
           cp simple_aff_prop.f90 ./SIMPLE/src/utils/clustering/
           cp starfile_filename.cpp ./SIMPLE/src/extlibs/starfile/
