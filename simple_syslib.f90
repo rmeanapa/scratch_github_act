@@ -20,6 +20,16 @@ interface
         character(c_char),dimension(*),intent(in)  ::  dirname
     end function rmdir
 
+#if !defined(_WIN32)
+    !! unlink() deletes a name from the filesystem. On success, zero is
+    !! returned. On error, -1 is returned and errno is set.
+    function unlink(pathname) bind(C, name="unlink")
+        use, intrinsic :: iso_c_binding
+        integer(c_int) :: unlink
+        character(c_char),dimension(*),intent(in) :: pathname
+    end function unlink
+#endif
+
     !! mkdir() attempts to create a directory named pathname. mkdir returns zero
     !! on success, or -1 if an error occurred (in which case, errno is set
     !! appropriately). If errno equals EEXIST pathname already exists (not
@@ -227,14 +237,6 @@ contains
         end if
         envval = trim(adjustl(retval))
     end function simple_getenv
-
-    logical function is_windows_host()
-        integer      :: status
-        type(string) :: envval
-
-        envval = simple_getenv('OS', status)
-        is_windows_host = status == 0 .and. envval%has_substr('Windows_NT')
-    end function is_windows_host
 
     !> \brief Touch file, create file if necessary
     subroutine simple_touch( fname )
@@ -497,6 +499,7 @@ contains
         io_status = 0
         tmpdir_str = trim(adjustl(tmpdir))
         if(.not. dir_exists(tmpdir_str)) then
+            ! prepare path for C function
             allocate(path, source=trim(tmpdir)//c_null_char)
             io_status = makedir(trim(adjustl(path)), len_trim(tmpdir))
             path_str = trim(adjustl(path))
@@ -510,7 +513,7 @@ contains
             deallocate(path)
         end if
     end subroutine simple_mkdir
- 
+
     !> \brief  Remove directory
     !! return status 0=success for directory exists or directory created
     !! return error status for other removedir results
@@ -548,6 +551,43 @@ contains
         end if
         if(present(status)) status = io_status
     end subroutine simple_rmdir
+
+    !> \brief Remove a file using POSIX unlink(2).
+    !! return optional status 0=success for removed file or file not present;
+    !! return non-zero status for unlink errors.
+    subroutine simple_rmfile( f, status )
+        class(*),          intent(in)  :: f
+        integer, optional, intent(out) :: status
+
+#if defined(_WIN32) 
+        call del_file(f)
+        if (present(status)) status = 0
+#else
+        character(kind=c_char,len=:), allocatable :: path
+        integer :: io_status
+        logical :: file_e
+        file_e    = .false.
+        io_status = 0
+        select type(f)
+            type is(string)
+                inquire(file=f%to_char(), exist=file_e)
+                if( file_e ) allocate(path, source=f%to_char()//c_null_char)
+            type is(character(*))
+                inquire(file=trim(adjustl(f)), exist=file_e)
+                if( file_e ) allocate(path, source=trim(adjustl(f))//c_null_char)
+            class default
+                call simple_exception('Unsupported type', __FILENAME__ , __LINE__)
+        end select
+        if( file_e ) then
+            io_status = unlink(trim(adjustl(path)))
+            if( io_status /= 0 ) then
+                call simple_error_check(io_status, 'syslib:: simple_rmfile failed to remove '//trim(adjustl(path)))
+            end if
+            deallocate(path)
+        end if
+        if( present(status) ) status = io_status
+#endif
+    end subroutine simple_rmfile
 
     !> ensure C-strings get converted to fortran-style strings
     subroutine syslib_c2fortran_string( str, len )
@@ -641,11 +681,11 @@ contains
         integer                    :: sz, funit, ios, i, nlines, pid
         pid     = getpid()
         tmpfile = '__simple_filelist_'//int2str(pid)//'__'
-        if( is_windows_host() )then
-            cmd = 'cmd /c dir /b "'//trim(pattern)//'" > "'//tmpfile%to_char()//'"'
-        else
-            cmd = 'ls -1f '//trim(pattern)//' > '//tmpfile%to_char()
-        endif
+#if defined(_WIN32)
+        cmd = 'cmd /c dir /b "'//trim(pattern)//'" > "'//tmpfile%to_char()//'"'
+#else
+        cmd = 'ls -1f '//trim(pattern)//' > '//tmpfile%to_char()
+#endif
         call exec_cmdline( cmd, suppress_errors=.true.)
         if( .not. file_exists(tmpfile) )then
             if( allocated(list) ) deallocate(list)
@@ -694,17 +734,19 @@ contains
         if( present(chronological) ) l_chrono = chronological
         tmpfile = '__simple_filelist_'//int2str(part_glob)//'__'
         ! builds command
-        if( is_windows_host() )then
-            if( l_chrono )then
-                cmd = 'powershell -NoProfile -Command "Get-ChildItem -Path '''//dir%to_char()//''' -File | Sort-Object LastWriteTime | Where-Object { $_.Name -match '''//adjustl(trim(regexp))//''' } | ForEach-Object { $_.Name }" > "'//tmpfile%to_char()//'"'
-            else
-                cmd = 'powershell -NoProfile -Command "Get-ChildItem -Path '''//dir%to_char()//''' -File | Where-Object { $_.Name -match '''//adjustl(trim(regexp))//''' } | ForEach-Object { $_.Name }" > "'//tmpfile%to_char()//'"'
-            endif
-        else if( l_chrono )then
+#if defined(_WIN32)
+        if( l_chrono )then
+            cmd = 'powershell -NoProfile -Command "Get-ChildItem -Path '''//dir%to_char()//''' -File | Sort-Object LastWriteTime | Where-Object { $_.Name -match '''//adjustl(trim(regexp))//''' } | ForEach-Object { $_.Name }" > "'//tmpfile%to_char()//'"'
+        else
+            cmd = 'powershell -NoProfile -Command "Get-ChildItem -Path '''//dir%to_char()//''' -File | Where-Object { $_.Name -match '''//adjustl(trim(regexp))//''' } | ForEach-Object { $_.Name }" > "'//tmpfile%to_char()//'"'
+        endif
+#else
+        if( l_chrono )then
             cmd = 'ls -1f -rt '//dir%to_char()//' | grep -E '''//adjustl(trim(regexp))//''' > '//tmpfile%to_char()
         else
             cmd = 'ls -1f '//dir%to_char()//' | grep -E '''//adjustl(trim(regexp))//''' > '//tmpfile%to_char()
         endif
+#endif
         call exec_cmdline(cmd, suppress_errors=.true.)
         if( .not. file_exists(tmpfile) )then
             if( allocated(list) ) deallocate(list)
@@ -761,14 +803,6 @@ contains
             end select
         endif
     end subroutine del_file
-
-    subroutine simple_rmfile(file, status)
-        class(*),          intent(in)  :: file
-        integer, optional, intent(out) :: status
-
-        call del_file(file)
-        if (present(status)) status = 0
-    end subroutine simple_rmfile
 
     integer(4) function get_process_id( )
         get_process_id = getpid()
