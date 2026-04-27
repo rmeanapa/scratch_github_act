@@ -733,6 +733,14 @@ contains
         endif
     end subroutine del_file
 
+    subroutine simple_rmfile(file, status)
+        class(*),          intent(in)  :: file
+        integer, optional, intent(out) :: status
+
+        call del_file(file)
+        if (present(status)) status = 0
+    end subroutine simple_rmfile
+
     integer(4) function get_process_id( )
         get_process_id = getpid()
     end function get_process_id
