@@ -50,7 +50,7 @@ contains
 
   ! Run all ipc_mq unit tests. Linux-only; compiled to a no-op elsewhere.
   subroutine run_all_ipc_mq_tests()
-#ifdef _WIN32
+#ifdef __windows__ 
     return
 #elif defined(__linux__)
     write(*,'(A)') '**** running all ipc mq tests ****'

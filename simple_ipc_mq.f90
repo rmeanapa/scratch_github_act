@@ -91,7 +91,7 @@ module simple_ipc_mq
 
 contains
 
-#ifdef _WIN32
+#ifdef __windows__ 
 
 #elif defined(__linux__)
 
