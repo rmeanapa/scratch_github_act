@@ -50,8 +50,9 @@ jobs:
           cp starfile_table.cpp ./SIMPLE/src/extlibs/starfile/
           cp posix_stubs_win32.c ./SIMPLE/src/fileio/posix_stubs_win32.c
           cp symlink_stub.c ./SIMPLE/src/fileio/symlink_stub.c
+          cp simple_ipc_mq_tester.f90 ./SIMPLE/src/utils/comm
+          cp simple_ipc_mq.f90 ./SIMPLE/src/utils/comm
           cp CMakeLists.txt ./SIMPLE/src/
-          cp CompilerConfig.cmake ./SIMPLE/cmake/
           cd SIMPLE
           rm -rf build
           mkdir build
