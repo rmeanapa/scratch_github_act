@@ -91,9 +91,8 @@ module simple_ipc_mq
 
 contains
 
-#ifdef __windows__ 
 
-#elif defined(__linux__)
+#if !defined(_WIN32) && !defined(APPLE)
 
   ! Create and open a new POSIX message queue. The queue path is
   ! /<name>.<pid>. If max_msgsize is given the queue is configured with
