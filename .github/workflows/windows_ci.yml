@@ -59,7 +59,7 @@ jobs:
           rm -rf build
           mkdir build
           cd build
-          cmake -G "Unix Makefiles" ..
+          cmake -G "Unix Makefiles" -D NICE=ON ..
           make -j install
           export SIMPLE_EMAIL="my.name@uni.edu"
           export SIMPLE_QSYS="local"
