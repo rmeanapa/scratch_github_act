@@ -53,6 +53,7 @@ jobs:
           cp simple_ipc_mq_tester.f90 ./SIMPLE/src/utils/comm
           cp simple_ipc_mq.f90 ./SIMPLE/src/utils/comm
           cp CMakeLists.txt ./SIMPLE/src/
+          cp simple_test_units.f90 ./SIMPLE/production/tests
           cd SIMPLE
           rm -rf build
           mkdir build
