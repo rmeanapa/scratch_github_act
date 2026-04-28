@@ -53,6 +53,8 @@ jobs:
           cp CMakeLists.txt ./SIMPLE/src/
           cp simple_ipc_mq_tester.f90 ./SIMPLE/src/utils/comm
           cp simple_ipc_mq.f90 ./SIMPLE/src/utils/comm
+          cp simple_forked_process.f90 ./SIMPLE/src/utils/
+          cp simple_forked_process_tester.f90 ./SIMPLE/src/utils/
           cd SIMPLE
           rm -rf build
           mkdir build
