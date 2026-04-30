@@ -69,8 +69,28 @@ module unix_types
     integer, parameter, public :: c_useconds_t  = c_unsigned_int
 
 #elif defined (_WIN32)
-    integer, parameter, public :: c_speed_t = c_int
-    integer, parameter, public :: c_pid_t = c_int
-    integer, parameter, public :: c_useconds_t = c_int
+    integer, parameter, public :: c_blkcnt_t    = c_int
+    integer, parameter, public :: c_blksize_t   = c_int
+    integer, parameter, public :: c_cc_t        = c_int
+    integer, parameter, public :: c_clockid_t   = c_int
+    integer, parameter, public :: c_dev_t       = c_int
+    integer, parameter, public :: c_gid_t       = c_int
+    integer, parameter, public :: c_in_addr_t   = c_int
+    integer, parameter, public :: c_ino_t       = c_int
+    integer, parameter, public :: c_key_t       = c_int
+    integer, parameter, public :: c_mode_t      = c_int
+    integer, parameter, public :: c_mqd_t       = c_int
+    integer, parameter, public :: c_nlink_t     = c_int
+    integer, parameter, public :: c_off_t       = c_int
+    integer, parameter, public :: c_regoff_t    = c_int
+    integer, parameter, public :: c_socklen_t   = c_int
+    integer, parameter, public :: c_size_t      = c_int
+    integer, parameter, public :: c_speed_t     = c_int
+    integer, parameter, public :: c_suseconds_t = c_int
+    integer, parameter, public :: c_tcflag_t    = c_int
+    integer, parameter, public :: c_time_t      = c_int
+    integer, parameter, public :: c_uid_t       = c_int
+    integer, parameter, public :: c_useconds_t  = c_int
+    integer, parameter, public :: c_pid_t       = c_int
 #endif
 end module unix_types
