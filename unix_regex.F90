@@ -3,17 +3,18 @@
 ! Author:  Philipp Engel
 ! Licence: ISC
 
+
 module unix_regex
     use, intrinsic :: iso_c_binding
     use :: unix_types
     implicit none
     private
 
-#if defined (_WIN32)
+    ! Always define a dummy c_regex_t so it is visible for import and use
     type, bind(c), public :: c_regex_t
         integer(kind=c_int) :: dummy
     end type c_regex_t
-#endif
+
 
 #if defined (__linux__)
 
