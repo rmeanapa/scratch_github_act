@@ -18,6 +18,7 @@ int bind(int sockfd, const void *addr, size_t addrlen) { errno = ENOSYS; return 
 int setsockopt(int sockfd, int level, int optname, const void *optval, size_t optlen) { errno = ENOSYS; return -1; }
 
 // Process control
+#undef fork
 pid_t waitpid(pid_t pid, int *status, int options) { errno = ENOSYS; return -1; }
 int pipe(int pipefd[2]) { errno = ENOSYS; return -1; }
 int fcntl(int fd, int cmd, ...) { errno = ENOSYS; return -1; }
