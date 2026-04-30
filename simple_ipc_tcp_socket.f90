@@ -240,16 +240,16 @@ module simple_ipc_tcp_socket
 ! Platform-specific code
 #ifdef _WIN32
     ! Windows: use ipconfig
-    cmd  = 'ipconfig' // c_null_char
-    mode = 'r'        // c_null_char
+    cmd           = 'ipconfig' // c_null_char
+    mode          = 'r'        // c_null_char
     self%host_ips = string('127.0.0.1')
-    pipe = c_popen(cmd, mode)
+    pipe          = c_popen(cmd, mode)
     if( .not. c_associated(pipe) ) return
     found_ip = .false.
     do while (.true.)
       ret = c_fgets(buf(1), int(size(buf), c_int), pipe)
       if (.not. c_associated(ret)) exit
-      fbuf = ''
+      fbuf   = ''
       buflen = 0
       do i = 1, size(buf)
         if (buf(i) == c_null_char) exit
@@ -258,15 +258,15 @@ module simple_ipc_tcp_socket
       end do
       ip_start = index(fbuf, 'IPv4 Address')
       if (ip_start > 0) then
-        ip_start = index(fbuf, ':')
-        if (ip_start > 0 .and. ip_start < buflen) then
-          ipstr = adjustl(fbuf(ip_start+1:buflen))
-          ipstr = trim(ipstr)
-          if (len_trim(ipstr) >= 4) then
-            if (ipstr(1:4) /= '127.') then
-              self%host_ips = string(ipstr)
-              found_ip = .true.
-              exit
+          ip_start = index(fbuf, ':')
+          if (ip_start > 0 .and. ip_start < buflen) then
+              ipstr = adjustl(fbuf(ip_start+1:buflen))
+              ipstr = trim(ipstr)
+              if (len_trim(ipstr) >= 4) then
+                 if (ipstr(1:4) /= '127.') then
+                    self%host_ips = string(ipstr)
+                    found_ip = .true.
+                  exit
             end if
           end if
         end if
@@ -277,10 +277,10 @@ module simple_ipc_tcp_socket
     return
 #elif defined(__APPLE__)
     ! macOS: use ipconfig getifaddr en0
-    cmd  = 'ipconfig getifaddr en0' // c_null_char
-    mode = 'r'        // c_null_char
+    cmd           = 'ipconfig getifaddr en0' // c_null_char
+    mode          = 'r'        // c_null_char
     self%host_ips = string('127.0.0.1')
-    pipe = c_popen(cmd, mode)
+    pipe          = c_popen(cmd, mode)
     if( .not. c_associated(pipe) ) return
     found_ip = .false.
     ret = c_fgets(buf(1), int(size(buf), c_int), pipe)
@@ -306,11 +306,16 @@ module simple_ipc_tcp_socket
     if (.not. found_ip) self%host_ips = string('127.0.0.1')
     return
 #else
-    ! Linux: use hostname -I
+    ! Linux: try hostname -I, fallback to hostname -i if needed
     cmd  = 'hostname -I' // c_null_char
     mode = 'r'           // c_null_char
     self%host_ips = string('')
     pipe = c_popen(cmd, mode)
+    if( .not. c_associated(pipe) ) then
+      ! fallback to hostname -i (lowercase)
+      cmd  = 'hostname -i' // c_null_char
+      pipe = c_popen(cmd, mode)
+    end if
     if( .not. c_associated(pipe) ) return
     ret = c_fgets(buf(1), int(size(buf), c_int), pipe)
     rc  = c_pclose(pipe)
@@ -318,32 +323,32 @@ module simple_ipc_tcp_socket
     fbuf   = ''
     buflen = 0
     do i = 1, size(buf)
-      if( buf(i) == c_null_char ) exit
-      fbuf(i:i) = transfer(buf(i), ' ')
-      buflen    = i
+        if( buf(i) == c_null_char ) exit
+        fbuf(i:i) = transfer(buf(i), ' ')
+        buflen    = i
     end do
     first       = .true.
     token_start = 1
     do i = 1, buflen + 1
-      if( i > buflen          .or. fbuf(i:i) == ' '     &
-                              .or. fbuf(i:i) == char(10) &
-                              .or. fbuf(i:i) == char(13) ) then
-        tok_len = i - token_start
-        if( tok_len > 0 ) then
-          token = fbuf(token_start : token_start + tok_len - 1)
-          if( len_trim(token) >= 4 ) then
-            if( token(1:4) /= '127.' ) then
-              if( first ) then
-                self%host_ips = string(trim(token))
-                first         = .false.
-              else
-                self%host_ips = string(self%host_ips%to_char() // ',' // trim(token))
-              end if
+        if( i > buflen          .or. fbuf(i:i) == ' '     &
+            .or. fbuf(i:i) == char(10) &
+            .or. fbuf(i:i) == char(13) ) then
+            tok_len = i - token_start
+            if( tok_len > 0 ) then
+                token = fbuf(token_start : token_start + tok_len - 1)
+                if( len_trim(token) >= 4 ) then
+                    if( token(1:4) /= '127.' ) then
+                        if( first ) then
+                            self%host_ips = string(trim(token))
+                            first         = .false.
+                        else
+                            self%host_ips = string(self%host_ips%to_char() // ',' // trim(token))
+                        end if
+                    end if
+                end if
             end if
-          end if
+            token_start = i + 1
         end if
-        token_start = i + 1
-      end if
     end do
 #endif
     write(logfhandle,'(A,A)')'>>> IPC_TCP_SOCKET host IPs: ', self%host_ips%to_char()
