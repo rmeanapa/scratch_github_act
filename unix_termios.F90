@@ -10,15 +10,12 @@ module unix_termios
     private
 
 
+
 #if defined (_WIN32)
     type, bind(c), public :: c_termios
         integer(kind=c_int) :: dummy
     end type c_termios
 #endif
-    use, intrinsic :: iso_c_binding
-    use :: unix_types
-    implicit none
-    private
 
 #if defined (__linux__)
 
