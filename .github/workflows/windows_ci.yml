@@ -62,7 +62,7 @@ jobs:
           cd build
           #debug mode
           #cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=debug ..
-          cmake -G "Unix Makefiles" ..
+          cmake -G "Unix Makefiles" -D_WIN32 ..
           make -j install
           export SIMPLE_EMAIL="my.name@uni.edu"
           export SIMPLE_QSYS="local"
