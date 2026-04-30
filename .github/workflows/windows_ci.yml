@@ -59,6 +59,7 @@ jobs:
           rm -rf build
           mkdir build
           cd build
+          #debug mode
           #cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=debug ..
           cmake -G "Unix Makefiles" ..
           make -j install
