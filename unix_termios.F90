@@ -312,9 +312,9 @@ module unix_termios
         integer(kind=c_speed_t)  :: c_ospeed         = 0_c_speed_t
     end type c_termios
 
+#endif
 #elif defined (_WIN32)
-    ! Dummy types for Windows compatibility
-    integer, parameter, public :: c_speed_t = c_int
+    ! Dummy type for Windows compatibility
     type, bind(c), public :: c_termios
         integer(kind=c_int) :: dummy
     end type c_termios

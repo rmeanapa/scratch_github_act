@@ -1,7 +1,4 @@
-! Windows compatibility
-#if defined (_WIN32)
-    integer, parameter, public :: c_pid_t = c_int
-#endif
+
 ! unix_unistd.F90
 !
 ! Author:  Philipp Engel
