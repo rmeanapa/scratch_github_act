@@ -9,11 +9,6 @@ module unix_termios
     implicit none
     private
 
-#if defined (_WIN32)
-    type, bind(c), public :: c_termios
-        integer(kind=c_int) :: dummy
-    end type c_termios
-#endif
 
 #if defined (_WIN32)
     type, bind(c), public :: c_termios
