@@ -57,6 +57,9 @@ jobs:
           cp simple_forked_process.f90 ./SIMPLE/src/utils/
           cp simple_forked_process_tester.f90 ./SIMPLE/src/utils/
           cp unix_pthread.F90 ./SIMPLE/src/extlibs/unix/src/
+          cp unix_termios.F90 ./SIMPLE/src/extlibs/unix/src/
+          cp unix_types.F90 ./SIMPLE/src/extlibs/unix/src/
+          cp unix_unistd.F90 ./SIMPLE/src/extlibs/unix/src/
           cp unix_utsname.F90 ./SIMPLE/src/extlibs/unix/src/
           cp CompilerConfig.cmake  ./SIMPLE/cmake/
           cd SIMPLE
