@@ -313,12 +313,7 @@ module unix_termios
     end type c_termios
 
 #endif
-#elif defined (_WIN32)
-    ! Dummy type for Windows compatibility
-    type, bind(c), public :: c_termios
-        integer(kind=c_int) :: dummy
-    end type c_termios
-#endif
+
 
     public :: c_cfgetispeed
     public :: c_cfgetospeed

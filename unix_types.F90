@@ -1,3 +1,5 @@
+#elif defined (_WIN32)
+    integer, parameter, public :: c_useconds_t = c_int
 ! unix_types.F90
 !
 ! Author:  Philipp Engel
