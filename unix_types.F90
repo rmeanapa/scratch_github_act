@@ -1,5 +1,3 @@
-#elif defined (_WIN32)
-    integer, parameter, public :: c_useconds_t = c_int
 ! unix_types.F90
 !
 ! Author:  Philipp Engel
@@ -17,6 +15,7 @@ module unix_types
     integer, parameter, public :: c_uint16_t = c_int16_t
     integer, parameter, public :: c_uint32_t = c_int32_t
     integer, parameter, public :: c_uint64_t = c_int64_t
+
 
 #if defined (__linux__)
 
@@ -72,5 +71,6 @@ module unix_types
 #elif defined (_WIN32)
     integer, parameter, public :: c_speed_t = c_int
     integer, parameter, public :: c_pid_t = c_int
+    integer, parameter, public :: c_useconds_t = c_int
 #endif
 end module unix_types
