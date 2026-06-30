@@ -22,11 +22,11 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            gcc gfortran cmake \
+            build-essential gfortran cmake git perl \
             liblzma-dev libtiff-dev libwebp-dev libfftw3-dev libjpeg-dev \
             gnuplot sqlite3 \
             libcurl4-openssl-dev libopenblas-dev liblapack-dev libarpack2-dev \
-            mpich libmpich-dev libcoarrays-mpich-dev 
+            mpich libmpich-dev libcoarrays-mpich-dev
           which cafrun
           which caf
           which cafrun
