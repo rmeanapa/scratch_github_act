@@ -27,7 +27,8 @@ jobs:
             gnuplot sqlite3 \
             openmpi-bin libopenmpi-dev libcoarrays-openmpi-dev \
             libcurl4-openssl-dev libopenblas-dev liblapack-dev libarpack2-dev \
-            gfortran libcoarrays-dev libcoarrays-openmpi-dev
+            gfortran mpich libmpich-dev libcoarrays-mpich-dev 
+            #gfortran libcoarrays-dev libcoarrays-openmpi-dev
           which cafrun
           which caf
           which cafrun
