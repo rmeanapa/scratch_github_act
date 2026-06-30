@@ -51,4 +51,4 @@ jobs:
           export SIMPLE_QSYS="coarray"
           export SIMPLE_PATH="$GITHUB_WORKSPACE/SIMPLE/build"
           export PATH="$SIMPLE_PATH/scripts:$SIMPLE_PATH/bin:$PATH"
-          simple_test_exec test=coarrays
+          cafrun -np 4 simple_test_exec test=coarrays
