@@ -31,8 +31,6 @@ jobs:
           which caf
           which cafrun
           caf --show
-          find /usr -name 'libcaf_mpi*' 2>/dev/null
-          dpkg -L libcoarrays-openmpi-dev | grep caf_mpi
 
       - name: Install dependencies (macOS)
         if: matrix.os == 'macos-latest'
