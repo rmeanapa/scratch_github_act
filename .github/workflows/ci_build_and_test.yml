@@ -25,8 +25,8 @@ jobs:
             gcc gfortran cmake \
             liblzma-dev libtiff-dev libwebp-dev libfftw3-dev libjpeg-dev \
             gnuplot sqlite3 \
-            openmpi-bin libopenmpi-dev libcoarrays-openmpi-dev \
-            libcurl4-openssl-dev libopenblas-dev liblapack-dev libarpack2-dev
+            libcurl4-openssl-dev libopenblas-dev liblapack-dev libarpack2-dev \
+            mpich libmpich-dev libcoarrays-mpich-dev 
           which cafrun
           which caf
           which cafrun
