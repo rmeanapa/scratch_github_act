@@ -39,43 +39,13 @@ jobs:
         shell: msys2 {0}
         run: |
           git clone https://github.com/hael/SIMPLE.git 
-          cp simple_posix.c ./SIMPLE/src/fileio/
-          cp simple_syslib.f90 ./SIMPLE/src/fileio/
-          cp simple_syslib_tester.f90 ./SIMPLE/src/fileio/
-          cp simple_fileio.f90 ./SIMPLE/src/fileio/
-          cp simple_forked_process_tester.f90 ./SIMPLE/src/utils/
-          cp starfile_filename.h ./SIMPLE/src/extlibs/starfile/
-          cp simple_aff_prop.f90 ./SIMPLE/src/utils/clustering/
-          cp starfile_filename.cpp ./SIMPLE/src/extlibs/starfile/
-          cp starfile_table.cpp ./SIMPLE/src/extlibs/starfile/
-          cp posix_stubs_win32.c ./SIMPLE/src/fileio/posix_stubs_win32.c
-          cp symlink_stub.c ./SIMPLE/src/fileio/symlink_stub.c
-          cp CMakeLists.txt ./SIMPLE/src/
-          cp simple_ipc_tcp_socket.f90 ./SIMPLE/src/utils/comm/
-          cp simple_ipc_mq_tester.f90 ./SIMPLE/src/utils/comm
-          cp simple_ipc_mq.f90 ./SIMPLE/src/utils/comm
-          cp simple_forked_process.f90 ./SIMPLE/src/utils/
-          cp simple_forked_process_tester.f90 ./SIMPLE/src/utils/
-          cp unix_pthread.F90 ./SIMPLE/src/extlibs/unix/src/
-          cp unix_termios.F90 ./SIMPLE/src/extlibs/unix/src/
-          cp unix_types.F90 ./SIMPLE/src/extlibs/unix/src/
-          cp unix_unistd.F90 ./SIMPLE/src/extlibs/unix/src/
-          cp unix_utsname.F90 ./SIMPLE/src/extlibs/unix/src/
-          cp CompilerConfig.cmake  ./SIMPLE/cmake/
           cd SIMPLE
-          rm -rf build
-          mkdir build
-          cd build
-          #debug mode
-          #cmake -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=debug ..
-          cmake -G "Unix Makefiles" -D_WIN32=1 ..
-          make -j install
+          ./compile_windows.sh
           export SIMPLE_EMAIL="my.name@uni.edu"
           export SIMPLE_QSYS="local"
           export SIMPLE_PATH="$GITHUB_WORKSPACE/SIMPLE/build"
           export PATH="$SIMPLE_PATH/scripts:$SIMPLE_PATH/bin:$PATH"
           simple_test_units
-          simple_test_install
 
 #on: [push]
 #
