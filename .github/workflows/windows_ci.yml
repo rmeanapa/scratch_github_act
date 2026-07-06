@@ -36,6 +36,9 @@ jobs:
             mingw-w64-ucrt-x86_64-libjpeg-turbo
             mingw-w64-ucrt-x86_64-openblas 
             mingw-w64-ucrt-x86_64-arpack
+            mingw-w64-ucrt-x86_64-python
+            mingw-w64-ucrt-x86_64-pip
+            mingw-w64-ucrt-x86_64-sqlite3
 
       - name: Configure and Build
         shell: msys2 {0}
