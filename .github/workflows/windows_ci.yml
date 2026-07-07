@@ -115,6 +115,21 @@ jobs:
           echo "-------------------- TEST UNITS -------------------------"
           simple_test_units
 
+      - name: Configure and Build NICE
+        shell: msys2 {0}
+        run: |
+          git clone https://github.com/hael/SIMPLE.git 
+          cd SIMPLE
+          mkdir build
+          cd build
+          cmake -D NICE=ON -G "Unix Makefiles" ..
+          make -j install
+          export SIMPLE_EMAIL="my.name@uni.edu"
+          export SIMPLE_QSYS="local"
+          export SIMPLE_PATH="$GITHUB_WORKSPACE/SIMPLE/build"
+          export PATH="$SIMPLE_PATH/scripts:$SIMPLE_PATH/bin:$PATH"
+          nice_local
+
 
 #on: [push]
 #
